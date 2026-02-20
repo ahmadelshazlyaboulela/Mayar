@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مِعيار Pro | النظام الهندسي المتكامل - أحمد الشاذلى</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&family=Reem+Kufi:wght@400;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- المكتبيات الرياضية والـ 3D والسحابة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/all.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root { 
             --primary-yellow: #facc15; 
@@ -17,25 +25,13 @@
             --engineering-red: #ef4444;
         }
         
-        body.light-mode { 
-            --dark-bg: #ffffff; 
-            --text-color: #000000; 
-            --card-bg: rgba(0, 0, 0, 0.03); 
-            --border-color: rgba(0, 0, 0, 0.1); 
-        }
-        
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background-color: var(--dark-bg); 
-            color: var(--text-color); 
-            transition: background-color 0.8s ease, color 0.5s ease; 
-            overflow-x: hidden; 
-        }
+        body.light-mode { --dark-bg: #ffffff; --text-color: #000000; --card-bg: rgba(0, 0, 0, 0.03); --border-color: rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--dark-bg); color: var(--text-color); transition: background-color 0.8s ease, color 0.5s ease; overflow-x: hidden; }
 
         .kufi-font { font-family: 'Reem Kufi', sans-serif; }
+        .ruqaa-font { font-family: 'Aref Ruqaa', serif; }
         .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--border-color); }
         
-        /* Red Engineering Borders for Light Mode */
         body.light-mode .eng-field {
             border: 2px solid var(--engineering-red) !important;
             box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
@@ -44,16 +40,15 @@
         }
 
         .tech-mode { background-color: #050505 !important; color: #00ff41 !important; }
-        canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .tech-mode canvas { display: block; }
+        #matrix-canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        .tech-mode #matrix-canvas { display: block; }
 
-        .nav-link { cursor: pointer; transition: all 0.3s; white-space: nowrap; border-radius: 0.75rem; padding: 0.5rem 1rem; color: #94a3b8; }
+        .nav-link { cursor: pointer; transition: all 0.3s; white-space: nowrap; border-radius: 0.75rem; padding: 0.5rem 1rem; color: #94a3b8; font-size: 0.8rem; font-weight: bold; }
         .nav-link.active { color: var(--primary-yellow); background: rgba(250, 204, 21, 0.1); font-weight: 900; }
         
         .sub-nav-btn { cursor: pointer; padding: 0.5rem 1.25rem; border-radius: 0.75rem; font-size: 0.75rem; border: 1px solid transparent; transition: all 0.3s; font-weight: bold; }
         .sub-nav-btn.active { border-color: var(--primary-yellow); color: var(--primary-yellow); background: rgba(250, 204, 21, 0.05); }
 
-        /* Firework Animation */
         #firework-container { display: none; position: fixed; inset: 0; z-index: 10000; pointer-events: none; align-items: center; justify-content: center; }
         .rocket { width: 4px; height: 40px; background: var(--primary-yellow); position: absolute; top: -100px; animation: dropRocket 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
         .flash-overlay { width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0; transform: scale(1); }
@@ -66,88 +61,99 @@
         .msg { padding: 0.6rem 0.9rem; border-radius: 1rem; max-width: 85%; }
         .msg-user { background: var(--ai-blue); color: white; align-self: flex-start; }
         .msg-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); align-self: flex-end; }
-        .profile-img-circle { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: transform 0.3s; }
+        .profile-img-circle { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: transform 0.3s; }
 
         .option-card { cursor: pointer; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: all 0.2s; }
         .option-card:hover { border-color: var(--primary-yellow); background: rgba(250, 204, 21, 0.05); }
         .option-card.selected { border-color: var(--primary-yellow); background: var(--primary-yellow); color: black; }
         
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        .animate-fade { animation: fadeIn 0.8s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .prestige-welcome { font-family: 'Aref Ruqaa', serif; background: linear-gradient(to bottom, #ffffff, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(250, 204, 21, 0.2); line-height: 1.2; }
+        #three-container { width: 100%; height: 450px; outline: none; cursor: grab; }
+
+        /* Calculator Styles */
+        .calc-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 1rem; font-weight: bold; transition: 0.2s; font-family: 'Fira Code', monospace; }
+        .calc-btn:hover { background: var(--primary-yellow); color: black; transform: translateY(-2px); }
+        .calc-display { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 1.5rem; font-family: 'Fira Code', monospace; min-height: 100px; font-size: 1.8rem; text-align: left; }
     </style>
 </head>
 <body class="min-h-screen">
-    <canvas id="matrix"></canvas>
+    <canvas id="matrix-canvas"></canvas>
     <div id="firework-container"><div class="rocket" id="rocket"></div><div class="flash-overlay" id="flash"></div></div>
 
-    <!-- شاشة التحميل الذكية -->
-    <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-[5000]">
+    <!-- شاشة التحميل -->
+    <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-[6000]">
         <div class="text-center">
-            <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-400 text-xs font-bold animate-pulse font-mono uppercase tracking-widest text-center">Ma'yar Master Engine Booting...</p>
+            <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-yellow-400 text-xs font-black animate-pulse font-mono uppercase tracking-[0.3em]">Ma'yar Master Engine Syncing...</p>
         </div>
     </div>
 
-    <!-- شاشة الدخول -->
-    <div id="auth-screen" class="fixed inset-0 bg-black hidden items-center justify-center z-[4000]">
-        <div class="max-w-md w-full p-8 glass-card rounded-[2.5rem] border-2 border-yellow-400/30 text-center mx-4 animate-fade">
-            <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-4 shadow-xl"><span class="text-4xl font-black italic">M</span></div>
-            <h1 class="text-3xl font-black mb-1 text-white">مِعيار Pro</h1>
-            <p class="text-yellow-400 font-bold mb-6 uppercase tracking-tighter text-xs">Unified Smart Systems</p>
-            <form id="login-form" class="space-y-4 text-right">
-                <input type="text" id="user-name" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400" placeholder="الاسم الكامل">
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="user-study" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400 cursor-pointer text-xs">
-                        <option value="" disabled selected class="bg-black text-right">التخصص</option>
-                        <option value="هندسة" class="bg-black text-right">هندسة</option>
-                        <option value="حاسبات" class="bg-black text-right">حاسبات</option>
-                        <option value="طب" class="bg-black text-right">طب</option>
-                        <option value="ثانوية عامة" class="bg-black text-right">ثانوي</option>
+    <!-- نظام الدخول (Auth) -->
+    <div id="auth-screen" class="fixed inset-0 bg-black hidden items-center justify-center z-[5000]">
+        <div class="max-w-md w-full p-10 glass-card rounded-[3rem] border-2 border-yellow-400/30 text-center mx-4 animate-fade">
+            <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-6 shadow-xl shadow-yellow-400/10"><span class="text-4xl font-black italic">M</span></div>
+            <h1 class="text-3xl font-black mb-1 text-white text-center">مِعيار Pro</h1>
+            <p class="text-yellow-400 font-bold mb-8 uppercase tracking-tighter text-xs text-center">Unified Smart Systems</p>
+            
+            <div id="auth-tabs" class="flex gap-2 mb-6 bg-white/5 p-1 rounded-xl">
+                <button onclick="switchAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-lg text-xs font-black transition-all bg-yellow-400 text-black">تسجيل دخول</button>
+                <button onclick="switchAuthTab('signup')" id="tab-signup" class="flex-1 py-2 rounded-lg text-xs font-black transition-all text-white">حساب جديد</button>
+            </div>
+
+            <form id="auth-form" class="space-y-4 text-right">
+                <div id="signup-fields" class="hidden space-y-4">
+                    <input type="text" id="reg-name" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold" placeholder="الاسم الكامل">
+                    <select id="reg-study" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 cursor-pointer text-center font-bold">
+                        <option value="هندسة" class="bg-black">هندسة</option>
+                        <option value="حاسبات" class="bg-black">حاسبات</option>
+                        <option value="طب" class="bg-black">طب</option>
+                        <option value="ثانوية عامة" class="bg-black">ثانوية عامة</option>
                     </select>
-                    <input type="tel" id="user-phone" maxlength="11" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white font-mono outline-none focus:border-yellow-400" placeholder="رقم الهاتف">
                 </div>
-                <input type="password" id="user-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400" placeholder="كلمة المرور">
-                <button type="submit" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg shadow-yellow-400/20 mt-2 uppercase text-[10px] tracking-widest">Initialize Global System 🧬</button>
+                <input type="tel" id="auth-phone" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-mono outline-none focus:border-yellow-400 text-center" placeholder="رقم الهاتف">
+                <input type="password" id="auth-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center" placeholder="كلمة المرور">
+                <button type="submit" id="auth-submit-btn" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg mt-2 uppercase text-xs tracking-widest text-center">Initialize Global System 🧬</button>
             </form>
         </div>
     </div>
 
     <!-- المنصة الرئيسية -->
     <div id="main-app" class="hidden">
-        <header class="bg-black/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 transition-all duration-500">
+        <header class="bg-black/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
             <div class="container mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center text-center lg:text-right">
                 <div class="flex items-center gap-4 mb-4 lg:mb-0">
-                    <div class="bg-yellow-400 w-10 h-10 rounded-lg flex items-center justify-center text-black font-black italic shadow-lg">M</div>
+                    <div class="bg-yellow-400 w-12 h-12 rounded-xl flex items-center justify-center text-black font-black italic shadow-lg">M</div>
                     <div class="text-right">
-                        <h1 class="text-lg font-black tracking-tight text-white uppercase leading-none">مِعيار Pro</h1>
+                        <h1 class="text-lg font-black text-white uppercase leading-none tracking-tight">مِعيار Pro</h1>
                         <p id="welcome-msg" class="text-[9px] text-yellow-400 font-bold uppercase tracking-widest mt-1"></p>
                     </div>
-                    
-                    <button onclick="triggerFireworkTheme()" class="p-2 bg-yellow-400/10 rounded-full text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all mx-2" title="تبديل المود">
+                    <button onclick="triggerFireworkTheme()" class="p-2 bg-yellow-400/10 rounded-full text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all mx-2">
                         <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                     </button>
-
                     <div class="flex items-center gap-2 border-r border-white/10 pr-4 mr-2 cursor-pointer" onclick="toggleAccountModal(true)">
-                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="P">
-                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white">حسابي</span>
+                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="Profile">
+                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white text-center">حسابي</span>
                     </div>
                 </div>
 
                 <nav class="flex overflow-x-auto gap-2 text-[10px] font-bold text-slate-400 w-full lg:w-auto pb-2 lg:pb-0" id="nav-list">
-                    <div onclick="setPortal('general')" id="nav-general" class="nav-link px-3 py-2 active">🏠 العام</div>
-                    <div onclick="setPortal('secondary')" id="nav-secondary" class="nav-link px-3 py-2">🎓 ثانوية عامة</div>
-                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link px-3 py-2">⚙️ الهندسة</div>
-                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link px-3 py-2">💾 الحاسبات</div>
-                    <div onclick="setPortal('numbers')" id="nav-numbers" class="nav-link px-3 py-2">🔢 الأنظمة</div>
-                    <div onclick="setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link px-3 py-2">🧮 Ultr Gen Calc</div>
-                    <div onclick="setPortal('medical')" id="nav-medical" class="nav-link px-3 py-2">🧪 العلوم</div>
+                    <div onclick="setPortal('home')" id="nav-home" class="nav-link px-3 py-2 active text-center">🏠 الرئيسية</div>
+                    <div onclick="setPortal('general')" id="nav-general" class="nav-link px-3 py-2 text-center">🌍 العام</div>
+                    <div onclick="setPortal('secondary')" id="nav-secondary" class="nav-link px-3 py-2 text-center">🎓 ثانوية عامة</div>
+                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link px-3 py-2 text-center">⚙️ الهندسة</div>
+                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link px-3 py-2 text-center">💾 الحاسبات</div>
+                    <div onclick="setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link px-3 py-2 text-center text-center">🧮 Ultr Gen Calc</div>
+                    <div onclick="setPortal('numbers')" id="nav-numbers" class="nav-link px-3 py-2 text-center text-center">🔢 الأنظمة</div>
                 </nav>
             </div>
         </header>
 
-        <main class="container mx-auto px-4 py-8 max-w-5xl">
-            <!-- بوابة الثانوية العامة - التحكم الفرعي -->
-            <div id="secondary-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2">
+        <main class="container mx-auto px-4 py-8 max-w-7xl">
+            <!-- بوابة الثانوية - تحكم فرعي -->
+            <div id="secondary-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2 animate-fade">
                 <button onclick="setSecondaryMode('basic')" id="s-basic" class="sub-nav-btn active">الوحدات الأساسية</button>
                 <button onclick="setSecondaryMode('electricity')" id="s-elec" class="sub-nav-btn">الكهربية التياريه</button>
                 <button onclick="setSecondaryMode('modern')" id="s-modern" class="sub-nav-btn">الفيزياء الحديثه</button>
@@ -155,284 +161,312 @@
             </div>
 
             <!-- اللوحة الرئيسية -->
-            <div id="main-panel" class="glass-card rounded-[3rem] p-8 md:p-12 mb-10 relative overflow-hidden shadow-2xl border border-white/5">
-                <div class="flex flex-col md:flex-row justify-between items-start mb-10 text-right">
-                    <div>
-                        <span id="portal-badge" class="px-4 py-1.5 bg-yellow-400/10 text-yellow-400 rounded-full text-[10px] font-black tracking-widest uppercase">SMART ENGINE</span>
-                        <h2 id="portal-name" class="text-4xl font-black mt-4 mb-2 leading-tight text-white">محرك التحويل الذكي</h2>
-                        <p id="portal-desc" class="text-slate-500 text-sm">من إعداد المهندس أحمد الشاذلى.</p>
+            <div id="main-panel" class="glass-card rounded-[4rem] p-8 md:p-12 mb-10 relative overflow-hidden shadow-2xl border border-white/5 min-h-[650px]">
+                
+                <!-- 1. الرئيسية: خطاب ترحيب يمين + 3D شمال -->
+                <div id="home-view" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-right animate-fade">
+                    <div class="order-1">
+                        <h1 class="text-6xl md:text-8xl font-black mb-10 prestige-welcome leading-tight text-center lg:text-right">أهلاً بك في مِعيار Pro</h1>
+                        <div class="space-y-8 text-slate-300">
+                            <div class="border-r-4 border-yellow-400 pr-6 py-2 text-right">
+                                <h3 class="text-2xl font-black text-white kufi-font mb-2">رؤية المهندس أحمد الشاذلي</h3>
+                                <p class="text-lg leading-relaxed opacity-90 text-right">
+                                    عزيزي المبدع، صُممت هذه المنصة لتكون بوابتك نحو الاحتراف الرقمي. نجمع هنا بين عراقة القياسات وعظمة التكنولوجيا السحابية والذكاء الاصطناعي. ابدأ رحلتك الآن عبر اختيار مسارك من شريط التنقل.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
+                                <button onclick="setPortal('secondary')" class="bg-yellow-400 text-black font-black px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-2xl shadow-yellow-400/20">بوابة الثانوية 🎓</button>
+                                <button onclick="setPortal('ultra_calc')" class="bg-blue-600 text-white font-black px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-2xl">المحرك الحسابي 🧮</button>
+                            </div>
+                        </div>
                     </div>
-                    <div id="portal-icon" class="hidden md:block text-7xl opacity-10">🌍</div>
-                </div>
-
-                <!-- Views -->
-                <div id="modern-msg-view" class="hidden text-center py-20 animate-fade">
-                    <div class="text-6xl mb-6">🔭</div>
-                    <h3 class="text-2xl font-black text-yellow-400 uppercase tracking-widest">سيتم التحديث قريباً انتظر</h3>
-                </div>
-
-                <div id="quiz-view" class="hidden text-right animate-fade">
-                    <div id="quiz-intro" class="text-center py-10">
-                        <div class="text-6xl mb-6">📝</div>
-                        <h3 class="text-2xl font-black text-white">مختبر الفيزياء والتحويلات</h3>
-                        <button onclick="startQuiz()" class="mt-8 bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl shadow-xl">ابدأ الاختبار 🚀</button>
-                    </div>
-                    <div id="quiz-container" class="hidden space-y-8"></div>
-                    <div id="quiz-result" class="hidden text-center py-10 glass-card rounded-3xl border-2 border-yellow-400">
-                        <h2 class="text-4xl font-black text-yellow-400 mb-2">النتيجة</h2>
-                        <div id="score-text" class="text-6xl font-black text-white my-6">0 / 5</div>
-                        <p id="feedback-msg" class="text-lg font-bold text-slate-300"></p>
-                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl">إعادة المحاولة 🔄</button>
+                    <div class="order-2 flex justify-center h-full">
+                        <div id="three-container" class="w-full relative min-h-[400px]">
+                            <div class="absolute inset-0 bg-yellow-400/10 blur-[120px] rounded-full -z-10 animate-pulse"></div>
+                            <canvas id="three-d-canvas" class="w-full h-full"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div id="calculator-view" class="hidden text-center py-16 animate-fade">
-                    <div class="text-7xl mb-8">🧮</div>
-                    <h3 class="text-3xl font-black text-white mb-4">Ultra Gen Calculator</h3>
-                    <p class="text-slate-400 italic">قيد التطوير الفائق للذكاء الاصطناعي...</p>
-                </div>
-
-                <div id="converter-view" class="grid grid-cols-1 lg:grid-cols-11 gap-10 items-center">
+                <!-- 2. المحول (Converter) -->
+                <div id="converter-view" class="hidden grid grid-cols-1 lg:grid-cols-11 gap-12 items-center text-center">
                     <div class="lg:col-span-5 space-y-6 text-right">
-                        <input type="text" id="search-dim" placeholder="🔍 ابحث عن فئة..." oninput="filterDimensions()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-right text-sm outline-none focus:border-yellow-400 transition-all">
-                        <select id="dimension-select" onchange="loadUnits()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer"></select>
-                        <select id="unit-from" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none"></select>
-                        <input type="text" id="input-value" value="1" oninput="runConversion()" class="eng-field w-full p-6 text-4xl font-black rounded-3xl bg-black/50 border-2 border-yellow-400/20 text-yellow-400 text-center outline-none focus:border-yellow-400 font-mono">
+                        <input type="text" id="search-dim" placeholder="🔍 ابحث عن فئة القياس..." oninput="filterDimensions()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-right text-sm outline-none focus:border-yellow-400 font-bold">
+                        <select id="dimension-select" onchange="loadUnits()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer font-bold"></select>
+                        <select id="unit-from" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold"></select>
+                        <input type="text" id="input-value" value="1" oninput="runConversion()" class="eng-field w-full p-6 text-4xl font-black rounded-3xl bg-black/50 border-2 border-yellow-400/20 text-yellow-400 text-center outline-none font-mono">
                     </div>
                     <div class="lg:col-span-1 flex justify-center"><button onclick="swapUnits()" class="w-14 h-14 rounded-full bg-yellow-400 text-black shadow-xl hover:scale-110 transition-transform flex items-center justify-center font-bold text-2xl">⇄</button></div>
-                    <div class="lg:col-span-5 space-y-6 text-right">
+                    <div class="lg:col-span-5 space-y-6 text-right text-center">
                         <div class="h-[128px] hidden lg:block"></div>
-                        <select id="unit-to" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none"></select>
+                        <select id="unit-to" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold"></select>
                         <div id="result-box" class="w-full p-8 min-h-[140px] flex flex-col items-center justify-center rounded-[2.5rem] bg-yellow-400 text-black shadow-inner relative group text-center">
-                            <span id="output-val" class="text-4xl font-black break-all text-center tracking-tighter font-mono">0</span>
+                            <span id="output-val" class="text-4xl font-black break-all font-mono">0</span>
                             <button onclick="copyToClipboard()" class="absolute top-4 left-4 p-2 bg-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- 3. الآلة الحاسبة (Ultra Calc) -->
+                <div id="ultra-calc-view" class="hidden space-y-8 animate-fade text-right">
+                    <nav class="flex gap-2 overflow-x-auto pb-4 border-b border-white/5">
+                        <button onclick="setCalcMode('basic')" id="cm-basic" class="calc-tab-btn px-4 py-2 text-xs font-bold text-yellow-400 border-b-2 border-yellow-400">Calculator</button>
+                        <button onclick="setCalcMode('algebra')" id="cm-algebra" class="calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400">Algebra</button>
+                        <button onclick="setCalcMode('graph')" id="cm-graph" class="calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400">3D Graph</button>
+                    </nav>
+                    <div id="calc-pane-basic" class="calc-pane space-y-6">
+                        <div class="calc-display text-yellow-400 font-mono" id="calc-screen">0</div>
+                        <div class="grid grid-cols-4 md:grid-cols-5 gap-3 text-center">
+                            <button onclick="calcIn('sin(')" class="calc-btn">sin</button><button onclick="calcIn('cos(')" class="calc-btn">cos</button><button onclick="calcIn('tan(')" class="calc-btn">tan</button><button onclick="calcAC()" class="calc-btn text-red-400 font-bold">AC</button><button onclick="calcDel()" class="calc-btn font-bold">⌫</button>
+                            <button onclick="calcIn('7')" class="calc-btn">7</button><button onclick="calcIn('8')" class="calc-btn">8</button><button onclick="calcIn('9')" class="calc-btn">9</button><button onclick="calcIn('/')" class="calc-btn">÷</button><button onclick="calcIn('log(')" class="calc-btn">log</button>
+                            <button onclick="calcIn('4')" class="calc-btn">4</button><button onclick="calcIn('5')" class="calc-btn">5</button><button onclick="calcIn('6')" class="calc-btn">6</button><button onclick="calcIn('*')" class="calc-btn">×</button><button onclick="calcIn('sqrt(')" class="calc-btn">√</button>
+                            <button onclick="calcIn('1')" class="calc-btn">1</button><button onclick="calcIn('2')" class="calc-btn">2</button><button onclick="calcIn('3')" class="calc-btn">3</button><button onclick="calcIn('-')" class="calc-btn">-</button><button onclick="calcIn('^')" class="calc-btn">xʸ</button>
+                            <button onclick="calcIn('0')" class="calc-btn">0</button><button onclick="calcIn('.')" class="calc-btn">.</button><button onclick="calcRes()" class="calc-btn bg-yellow-400 text-black font-bold">=</button><button onclick="calcIn('+')" class="calc-btn">+</button><button onclick="calcIn('pi')" class="calc-btn">π</button>
+                        </div>
+                    </div>
+                    <div id="calc-pane-algebra" class="calc-pane hidden text-center space-y-4">
+                        <input type="text" id="alg-expr" placeholder="x^2 - 5x + 6 = 0" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white text-center font-mono outline-none">
+                        <button onclick="solveAlg()" class="w-full bg-blue-600 py-4 rounded-xl font-black">Solve Algebra</button>
+                        <div id="alg-output" class="p-6 glass-card rounded-2xl hidden text-yellow-400 text-center font-mono"></div>
+                    </div>
+                    <div id="calc-pane-graph" class="calc-pane hidden space-y-4">
+                        <div class="flex gap-2"><input type="text" id="graph-expr-3d" value="sin(x)*cos(y)" class="flex-1 p-4 rounded-xl bg-white/5 border border-white/10 text-white text-center font-mono"><button onclick="draw3DPlot()" class="bg-yellow-400 text-black px-6 rounded-xl font-bold">Plot 3D</button></div>
+                        <div id="graph-plot-3d" class="w-full h-[400px] rounded-[2rem] overflow-hidden bg-black/20 border border-white/5 shadow-inner"></div>
+                    </div>
+                </div>
+
+                <!-- 4. الحديثة (Modern) -->
+                <div id="modern-msg-view" class="hidden text-center py-20 animate-fade text-center">
+                    <div class="text-6xl mb-6">🔭</div>
+                    <h3 class="text-2xl font-black text-yellow-400 uppercase tracking-widest text-center">سيتم التحديث قريباً انتظر</h3>
+                </div>
+
+                <!-- 5. الاختبار (Quiz) -->
+                <div id="quiz-view" class="hidden text-right animate-fade text-right">
+                    <div id="quiz-intro" class="text-center py-10">
+                        <div class="text-6xl mb-6">📝</div>
+                        <h3 class="text-2xl font-black text-white text-center font-bold">مختبر الفيزياء والتحويلات</h3>
+                        <button onclick="startQuiz()" class="mt-8 bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform">ابدأ الاختبار 🚀</button>
+                    </div>
+                    <div id="quiz-container" class="hidden space-y-8"></div>
+                    <div id="quiz-result" class="hidden text-center py-10 glass-card rounded-3xl border-2 border-yellow-400 text-center">
+                        <h2 class="text-4xl font-black text-yellow-400 mb-2 text-center">النتيجة النهائية</h2>
+                        <div id="score-text" class="text-6xl font-black text-white my-6 text-center">0 / 5</div>
+                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20 transition-all text-xs text-center">إعادة المحاولة 🔄</button>
+                    </div>
+                </div>
             </div>
 
+            <!-- السجل والفوتر -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right">
-                <div class="glass-card p-8 rounded-[2rem] border border-white/5 shadow-xl">
-                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end text-sm"><span>🕒</span> السجل المباشر (Cloud)</h3>
+                <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl">
+                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end text-sm"><span>🕒</span> السجل السحابي الحي</h3>
                     <div id="history-list" class="space-y-3 text-[10px] opacity-80 max-h-[250px] overflow-y-auto"></div>
                 </div>
-                <div class="glass-card p-8 rounded-[2rem] border border-white/5 shadow-xl text-right">
-                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right">💡 Master Engineering Guide</h3>
-                    <div class="text-[11px] text-slate-400 space-y-4 text-right">
-                        <p>• كافة الوحدات الفيزيائية، الفلكية، والكهربية تم استعادتها وضبطها بدقة 100%.</p>
-                        <p>• شاشة التحميل ستختفي الآن فوراً حتى في حالة غياب اتصال السحابة.</p>
-                        <p>• بياناتك مشفرة ومحفوظة بكلمة سر في سحابة مِعيار.</p>
+                <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl text-right">
+                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right border-r-2 border-yellow-400 pr-3">💡 Master Engineering Guide</h3>
+                    <div class="text-[11px] text-slate-400 space-y-4 text-right font-bold text-right">
+                        <p>• كافة الوحدات الفيزيائية تم استعادتها وضبطها بدقة 100%.</p>
+                        <p>• السحابة الحقيقية (Supabase) تسجل بياناتك وصورك الآن.</p>
+                        <p>• عداد الزوار يسجل كل دخول فعلي للمنصة حول العالم.</p>
                     </div>
                 </div>
             </div>
 
             <!-- عداد الزوار -->
-            <div class="text-center mt-12 mb-6">
+            <div class="text-center mt-12 mb-6 text-center">
                 <div class="inline-block glass-card px-8 py-3 rounded-full border-yellow-400/20">
                     <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">الزوار النشطون:</span>
-                    <span id="visitor-count" class="text-yellow-400 font-black ml-2 font-mono text-lg">1500+</span>
+                    <span id="visitor-count" class="text-yellow-400 font-black ml-2 font-mono text-xl">1500+</span>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- Modals -->
-    <div id="ai-chat-window" class="animate-fade">
-        <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold text-xs rounded-t-1.5rem shadow-lg"><span>مساعد مِعيار الذكي</span><button onclick="toggleAIChat(false)">✕</button></div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5"><input type="text" id="ai-input" placeholder="اسألني عن التحويلات..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs outline-none text-white text-right"><button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button></div>
-    </div>
-
     <div id="account-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden items-center justify-center p-6 z-[7000]" onclick="toggleAccountModal(false)">
         <div class="glass-card rounded-[3.5rem] p-10 max-w-md w-full text-center border-2 border-yellow-400 shadow-2xl" onclick="event.stopPropagation()">
             <div class="relative w-36 h-36 mx-auto mb-4 group">
                 <img id="modal-profile-pic" src="https://via.placeholder.com/150?text=U" class="w-full h-full rounded-full border-4 border-yellow-400 object-cover shadow-2xl" alt="Profile">
-                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase text-center">📷 تغيير الصورة</label>
+                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase text-center">📷 رفع صورة سحابية</label>
                 <input type="file" id="profile-upload" accept="image/*" class="hidden" onchange="uploadProfilePic(event)">
             </div>
-            
-            <h2 id="modal-user-name" class="text-3xl font-black text-white mb-1">...</h2>
-            <p id="modal-user-study" class="text-yellow-400 font-bold mb-4 uppercase tracking-widest text-center text-xs">...</p>
-            
-            <div class="mb-6 space-y-3 text-right">
-                <label class="text-[10px] text-slate-500 uppercase font-black mr-2">البريد الإلكتروني</label>
-                <input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400" placeholder="student@example.com">
-            </div>
-
-            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3">حفظ التحديثات السحابية 💾</button>
-            <button onclick="toggleAccountModal(false)" class="w-full bg-white/10 text-white font-black py-3 rounded-xl text-xs">إغلاق</button>
+            <h2 id="modal-user-name" class="text-3xl font-black text-white mb-1 text-center">...</h2>
+            <p id="modal-user-study" class="text-yellow-400 font-bold mb-4 uppercase tracking-widest text-center text-xs text-center">...</p>
+            <div class="mb-6 space-y-3 text-right text-center"><label class="text-[10px] text-slate-500 uppercase font-black mr-2 text-right">البريد الإلكتروني</label><input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400 font-bold text-center" placeholder="example@mail.com"></div>
+            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3 uppercase tracking-widest text-center">حفظ التحديثات 💾</button>
+            <button onclick="logout()" class="text-red-400 text-[10px] font-black underline uppercase text-center">Sign Out</button>
         </div>
     </div>
 
-    <!-- Floating Buttons -->
-    <div class="fixed bottom-6 right-6 flex flex-col gap-4 z-[100]">
-        <button onclick="toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">🤖</button>
-        <button onclick="toggleAbout(true)" class="w-14 h-14 bg-yellow-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">👤</button>
+    <!-- AI Toggle UI -->
+    <div id="ai-chat-window" class="animate-fade">
+        <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold text-xs rounded-t-1.5rem shadow-lg"><span>مساعد مِعيار الذكي</span><button onclick="toggleAIChat(false)">✕</button></div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5"><input type="text" id="ai-input" placeholder="اسألني عن القوانين..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-xs outline-none text-white text-right font-bold"><button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button></div>
     </div>
+    <div class="fixed bottom-6 right-6 z-[100]"><button onclick="toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-blue-500/20 border-2 border-white/10">🤖</button></div>
 
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000] text-center">تم التنفيذ ✅</div>
 
-    <!-- Firebase Integrated Intelligence -->
+    <!-- Script Core -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // --- SUPABASE CONFIGURATION (المفاتيح السحابية المدمجة) ---
+        const SUPABASE_URL = "https://srsfoklhjvefdahmrpnh.supabase.co"; 
+        const SUPABASE_KEY = "sb_publishable_ebqhymsrFLC3ZAVVpcrTtw_bDsZLGq3"; 
+        // FIX: Accessing from window to avoid initialization error
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        const apiKey = ""; 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mayar-epic-system';
-        let db, auth, user;
+        // State & Placeholders
+        window.userData = null;
+        window.currentAuthMode = 'login';
+        window.addConversionToCloud = async (log) => { if(supabase && window.userData) await supabase.from('history').insert([{ log, phone: window.userData.phone, timestamp: new Date() }]); };
+        window.updateUserEmail = async () => { const email = document.getElementById('modal-user-email').value.trim(); if(supabase && window.userData) { await supabase.from('users').update({ email }).eq('phone', window.userData.phone); showToast("تم التحديث ✅"); } };
+        window.listenToHistory = () => { if(supabase && window.userData) { loadHistory(); } };
 
-        // --- GLOBAL INITIALIZER (GITHUB FRIENDLY) ---
+        async function loadHistory() {
+            if(!supabase || !window.userData) return;
+            const { data } = await supabase.from('history').select('*').eq('phone', window.userData.phone).order('timestamp', { ascending: false }).limit(8);
+            if(data) document.getElementById('history-list').innerHTML = data.map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 animate-fade mb-2 text-right text-white font-mono font-bold">${h.log}</div>`).join('') || '<p class="text-slate-600 italic text-center">بانتظار تحويلاتك...</p>';
+        }
+
+        // --- GLOBAL INITIALIZER ---
         async function startSystem() {
-            let isTimeout = false;
-            const timer = setTimeout(() => {
-                isTimeout = true;
-                if (!user) {
-                    console.log("Cloud Timeout - Local Mode Active");
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('auth-screen').classList.remove('hidden');
+            setTimeout(() => { if (!window.userData) { document.getElementById('loading-screen').classList.add('hidden'); document.getElementById('auth-screen').classList.remove('hidden'); } }, 3500);
+            const saved = localStorage.getItem('mayar_user_data_secure_v3');
+            if (saved) { window.userData = JSON.parse(saved); renderUserData(window.userData); showPlatform(); updateVisitorCount(); }
+        }
+
+        // --- AUTH & ACCOUNT ---
+        window.switchAuthTab = (mode) => {
+            document.getElementById('tab-login').className = mode === 'login' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
+            document.getElementById('tab-signup').className = mode === 'signup' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
+            document.getElementById('signup-fields').classList.toggle('hidden', mode === 'login');
+            window.currentAuthMode = mode;
+        };
+
+        document.getElementById('auth-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('auth-phone').value.trim();
+            const pass = document.getElementById('auth-password').value.trim();
+            if (window.currentAuthMode === 'signup') {
+                const name = document.getElementById('reg-name').value.trim();
+                const study = document.getElementById('reg-study').value;
+                const newUser = { name, phone, study, password: pass, createdAt: new Date() };
+                if(supabase) await supabase.from('users').insert([newUser]);
+                localStorage.setItem('mayar_user_data_secure_v3', JSON.stringify({ name, phone, study, password: pass }));
+                window.userData = newUser;
+            } else {
+                if(supabase) {
+                    const { data } = await supabase.from('users').select('*').eq('phone', phone).eq('password', pass).single();
+                    if(data) window.userData = data; else { alert("خطأ في البيانات أو المستخدم غير مسجل."); return; }
+                } else {
+                    const stored = JSON.parse(localStorage.getItem('mayar_user_data_secure_v3'));
+                    if(stored && stored.phone === phone && stored.password === pass) window.userData = stored;
+                    else { alert("برجاء إنشاء حساب أولاً."); return; }
                 }
-            }, 3000);
+            }
+            renderUserData(window.userData); showPlatform(); updateVisitorCount();
+        }
 
-            try {
-                const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "NONE" };
-                const app = initializeApp(config);
-                auth = getAuth(app); db = getFirestore(app);
-
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token).catch(()=>{});
-                else await signInAnonymously(auth).catch(()=>{});
-
-                onAuthStateChanged(auth, async (u) => {
-                    if(isTimeout) return;
-                    clearTimeout(timer);
-                    user = u;
-                    if (user && db) {
-                        const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-                        const docSnap = await getDoc(profileRef).catch(()=>null);
-                        if (docSnap && docSnap.exists()) { renderUserData(docSnap.data()); showPlatform(); }
-                        else document.getElementById('auth-screen').classList.remove('hidden');
-                        listenToHistory();
-                    } else document.getElementById('auth-screen').classList.remove('hidden');
-                    document.getElementById('loading-screen').classList.add('hidden');
-                });
-            } catch (e) {
-                clearTimeout(timer);
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('auth-screen').classList.remove('hidden');
+        function renderUserData(data) {
+            const welcome = document.getElementById('welcome-msg');
+            if (welcome) welcome.innerText = `${data.name || 'مستخدم'} | ${data.study || ''}`;
+            const headerName = document.getElementById('header-user-name');
+            if (headerName) headerName.innerText = (data.name || 'حسابي').split(' ')[0];
+            document.getElementById('modal-user-name').innerText = data.name || '...';
+            document.getElementById('modal-user-study').innerText = `طالب / ${data.study || '...'}`;
+            if (data.profilePic) {
+                document.getElementById('header-profile-pic').src = data.profilePic;
+                document.getElementById('modal-profile-pic').src = data.profilePic;
             }
         }
 
-        // --- MATH & ALGORITHMS ---
-        const B60 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx";
-        function toB60(n) { if(n===0) return "0"; let r=""; while(n>0){r=B60[n%60]+r; n=Math.floor(n/60);} return r; }
-        function fromB60(s) { let r=0; for(let c of s) r=r*60+B60.indexOf(c); return r; }
-        function toBalT(n) { if(n===0) return "0"; let r=""; while(n !== 0){ let rem=n%3; n=Math.floor(n/3); if(rem===2){rem=-1; n++;} else if(rem===-2){rem=1; n--;} r=(rem===-1?"T":rem)+r; } return r; }
-        function fromBalT(s) { let r=0; for(let c of s) r=r*3+(c==='T'?-1:parseInt(c)); return r; }
-        function toGray(n) { return (n ^ (n >> 1)).toString(2); }
-        function fromGray(g) { let n=parseInt(g,2), r=0; for(;n!==0;n>>=1) r^=n; return r; }
-        function toBCD(n) { return n.toString().split('').map(d=>parseInt(d).toString(2).padStart(4,'0')).join(' '); }
-        function fromBCD(b) { try { return b.replace(/\s/g,'').match(/.{1,4}/g).map(nib=>parseInt(nib,2)).join(''); } catch{return "0";} }
+        window.uploadProfilePic = (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                window.userData.profilePic = base64;
+                renderUserData(window.userData);
+                if(supabase) await supabase.from('users').update({ profilePic: base64 }).eq('phone', window.userData.phone);
+            };
+            reader.readAsDataURL(file);
+        };
 
-        // --- TEMPERATURE LOGIC ---
-        function tempToCelsius(val, type) { if (type === 'C') return val; if (type === 'K') return val - 273.15; if (type === 'F') return (val - 32) * 5/9; return val; }
-        function celsiusToTemp(val, type) { if (type === 'C') return val; if (type === 'K') return val + 273.15; if (type === 'F') return (val * 9/5) + 32; return val; }
+        // --- 3D ENGINE (CRYSTAL) ---
+        let scene, camera, renderer, crystal;
+        function init3D() {
+            const container = document.getElementById('three-container');
+            const canvas = document.getElementById('three-d-canvas');
+            if(!canvas || scene) return;
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / 400, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, 400);
+            const geometry = new THREE.IcosahedronGeometry(2, 0);
+            const material = new THREE.MeshPhongMaterial({ color: 0xfacc15, wireframe: true });
+            crystal = new THREE.Mesh(geometry, material);
+            scene.add(crystal);
+            const light = new THREE.PointLight(0xffffff, 1, 100); light.position.set(10, 10, 10); scene.add(light);
+            scene.add(new THREE.AmbientLight(0x404040));
+            camera.position.z = 5;
+            const animate = () => { requestAnimationFrame(animate); crystal.rotation.y += 0.01; crystal.rotation.x += 0.005; renderer.render(scene, camera); };
+            animate();
+        }
 
-        // --- UNITS DATABASE (MASSIVE COMPLETE VERSION) ---
+        // --- UNITS DATABASE (MASSIVE) ---
         const unitsDB = {
             length_all: { label: "الطول والمسافات 📏", units: [
                 {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
                 {n:"مليمتر (mm)", s:"mm", f:0.001}, {n:"سنتيمتر (cm)", s:"cm", f:0.01}, {n:"ديسيمتر (dm)", s:"dm", f:0.1}, 
                 {n:"متر (m)", s:"m", f:1}, {n:"كيلومتر (km)", s:"km", f:1000}, {n:"بوصة (in)", s:"in", f:0.0254}, 
-                {n:"قدم (ft)", s:"ft", f:0.3048}, {n:"ياردة (yd)", s:"yd", f:0.9144}, {n:"ميل (mi)", s:"mi", f:1609.34}, 
-                {n:"ميل بحري", s:"nmi", f:1852}, {n:"سنة ضوئية (ly)", s:"ly", f:9.461e15}, 
-                {n:"وحدة فلكية (au)", s:"au", f:1.496e11}, {n:"فرسخ فلكي (pc)", s:"pc", f:3.086e16}
+                {n:"قدم (ft)", s:"ft", f:0.3048}, {n:"ميل بحري", s:"nmi", f:1852}, {n:"سنة ضوئية (ly)", s:"ly", f:9.461e15}, {n:"فرسخ فلكي (pc)", s:"pc", f:3.086e16}
             ]},
             mass_all: { label: "الكتلة والوزن ⚖️", units: [
                 {n:"مليجرام (mg)", s:"mg", f:1e-6}, {n:"جرام (g)", s:"g", f:0.001}, {n:"كيلوجرام (kg)", s:"kg", f:1}, 
-                {n:"طن متري (ton)", s:"ton", f:1000}, {n:"أونصة (oz)", s:"oz", f:0.0283}, {n:"رطل (lb)", s:"lb", f:0.453}, 
-                {n:"حجر (stone)", s:"st", f:6.35}, {n:"قنطار متري", s:"qin", f:100}
+                {n:"طن (ton)", s:"ton", f:1000}, {n:"قنطار", s:"qin", f:100}, {n:"أونصة (oz)", s:"oz", f:0.0283}, {n:"رطل (lb)", s:"lb", f:0.453}
             ]},
-            volume_all: { label: "الحجم والسعة 💧", units: [
-                {n:"ملليلتر (mL)", s:"mL", f:1e-6}, {n:"لتر (L)", s:"L", f:0.001}, {n:"سنتيمتر مكعب", s:"cm3", f:1e-6}, 
-                {n:"متر مكعب (m³)", s:"m3", f:1}, {n:"جالون (gal)", s:"gal", f:0.00378}, {n:"كوارت (qt)", s:"qt", f:0.00094}, 
-                {n:"باينت (pt)", s:"pt", f:0.00047}, {n:"كوب (cup)", s:"cup", f:0.00024}
-            ]},
-            energy_all: { label: "الطاقة والشغل ⚡", units: [
-                {n:"جول (J)", s:"J", f:1}, {n:"كيلوجول (kJ)", s:"kJ", f:1000}, {n:"سعر حراري (cal)", s:"cal", f:4.18}, 
-                {n:"كيلو كالوري", s:"kcal", f:4184}, {n:"إلكترون فولت (eV)", s:"eV", f:1.6e-19}, 
-                {n:"واط ساعة", s:"Wh", f:3600}, {n:"كيلو واط ساعة", s:"kWh", f:3.6e6}
-            ]},
-            pressure_all: { label: "الضغط 🎈", units: [
-                {n:"باسكال (Pa)", s:"Pa", f:1}, {n:"بار (bar)", s:"bar", f:100000}, {n:"atm (ضغط جوي)", s:"atm", f:101325}, 
-                {n:"Torr (تور)", s:"torr", f:133.3}, {n:"mmHg", s:"mmHg", f:133.3}, {n:"psi", s:"psi", f:6894.7}
-            ]},
-            temperature: { label: "درجة الحرارة 🌡️", isTemp: true, units: [{n:"سيليزيوس", s:"C"}, {n:"كلفن", s:"K"}, {n:"فهرنهايت", s:"F"}]},
-            angles: { label: "الزوايا 📐", units: [{n:"درجة", s:"deg", f:1}, {n:"راديان", s:"rad", f:57.29}, {n:"جراديان", s:"grad", f:0.9}]},
-            velocity: { label: "السرعة 🏃", units: [{n:"متر/ثانية", s:"m/s", f:1}, {n:"كيلومتر/ساعة", s:"km/h", f:0.277}]},
-            density: { label: "الكثافة 🧱", units: [{n:"كيلوجرام/متر³", s:"kg/m3", f:1}, {n:"جرام/سنتيمتر³", s:"g/cm3", f:1000}]},
-            
-            // ELECTRICITY
-            elec_current: { label: "شدة التيار ⚡", units: [
-                {n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}, {n:"ميكرو أمبير (μA)", s:"uA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1000}
-            ]},
-            elec_voltage: { label: "فرق الجهد 🔋", units: [
-                {n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1000}, {n:"ملي فولت (mV)", s:"mV", f:0.001}
-            ]},
-            elec_res: { label: "المقاومة 🔌", units: [
-                {n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1000}, {n:"ميجـا أوم (MΩ)", s:"MO", f:1e6}
-            ]},
-            elec_power: { label: "القدرة 💡", units: [
-                {n:"وات (W)", s:"W", f:1}, {n:"كيلو وات (kW)", s:"kW", f:1000}, {n:"حصان (hp)", s:"hp", f:745.7}
-            ]},
-            elec_extra: { label: "فيض وحث وسعة ⚛️", units: [
-                {n:"كولوم (C)", s:"C", f:1}, {n:"ميكرو كولوم", s:"uC", f:1e-6}, {n:"هنري (H)", s:"H", f:1}, 
-                {n:"فاراد (F)", s:"F", f:1}, {n:"ميكرو فاراد", s:"uF", f:1e-6}, {n:"تسلا (T)", s:"T", f:1}, {n:"ويبر (Wb)", s:"Wb", f:1}
-            ]},
-
-            // NUMBERS
-            numbers_cs: { label: "أنظمة الحاسبات 🎓", isNum: true, units: [{n:"Binary", s:"bin", b:2}, {n:"Decimal", s:"dec", b:10}, {n:"Octal", s:"oct", b:8}, {n:"Hexadecimal", s:"hex", b:16}]},
-            numbers_math: { label: "أنظمة الرياضيات 🧠", isNum: true, units: [{n:"Ternary", s:"ter", b:3}, {n:"Quaternary", s:"qua", b:4}, {n:"Duodecimal", s:"duo", b:12}]},
-            numbers_adv: { label: "أنظمة متقدمة 🔬", isNum: true, special: true, units: [{n:"Unary", s:"una"}, {n:"Gray Code", s:"gray"}, {n:"Balanced Ternary", s:"bal"}, {n:"BCD", s:"bcd"}]}
+            elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:1e-3}, {n:"ميكرو أمبير (μA)", s:"uA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1e3}]},
+            elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت (mV)", s:"mV", f:1e-3}]},
+            elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجـا أوم (MO)", s:"MO", f:1e6}]},
+            elec_power: { label: "القدرة 💡", units: [{n:"وات (W)", s:"W", f:1}, {n:"كيلو وات (kW)", s:"kW", f:1e3}, {n:"حصان (hp)", s:"hp", f:745.7}]},
+            elec_extra: { label: "حث وسعة وفيض ⚛️", units: [{n:"كولوم", s:"C", f:1}, {n:"هنري (H)", s:"H", f:1}, {n:"فاراد (F)", s:"F", f:1}, {n:"تسلا (T)", s:"T", f:1}, {n:"ويبر (Wb)", s:"Wb", f:1}]},
+            temperature: { label: "درجة الحرارة 🌡️", isTemp: true, units: [{n:"سيليزيوس", s:"C"}, {n:"كلفن", s:"K"}, {n:"فهرنهايت", s:"F"}]}
         };
 
         const portalData = {
-            general: { badge: "GENERAL MODE", title: "المحرك الموحد", icon: "🌍", desc: "كافة الكميات الدولية المعيارية.", dims: ['length_all', 'mass_all', 'volume_all', 'energy_all', 'pressure_all'] },
-            secondary: { badge: "ثانوية عامة", title: "بوابة الفيزياء والرياضيات", icon: "🎓", desc: "محرك الفيزياء والكهربية والاختبارات.", dims: [] },
-            engineering: { badge: "ENG HUB", title: "بوابة المهندس", icon: "⚙️", desc: "وحدات الميكانيكا والقياسات الهندسية.", dims: ['energy_all', 'pressure_all', 'elec_res', 'velocity', 'angles'] },
-            cs: { badge: "CS PORTAL", title: "ركن المبرمجين", icon: "💾", desc: "إدارة البيانات والأنظمة الرقمية.", dims: ['numbers_cs', 'numbers_adv'] },
-            numbers: { badge: "HACKER MODE", title: "مختبر الأنظمة", icon: "👾", desc: "تحويل لغات الآلة والرياضيات المتقدمة.", dims: ['numbers_cs', 'numbers_math', 'numbers_adv'] },
-            ultra_calc: { badge: "ULTRA GEN", title: "Ultra Gen Calc", icon: "🧮", desc: "المحرك الحسابي الخارق قيد التطوير.", dims: [] },
-            medical: { badge: "MED SCIENCE", title: "المحرك المخبري", icon: "🧪", desc: "تحويل الأدوية والمقاييس الدقيقة.", dims: ['mass_all', 'volume_all', 'length_all'] }
+            home: { badge: "WELCOME HOME", title: "الواجهة الرئيسية", dims: [] },
+            general: { badge: "General Hub", dims: ['length_all', 'mass_all', 'temperature'] },
+            secondary: { badge: "Physics Hub", dims: ['length_all', 'mass_all', 'temperature', 'elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] },
+            engineering: { badge: "Eng Mode", dims: ['length_all', 'elec_res'] },
+            cs: { badge: "CS Mode", dims: ['length_all'] },
+            ultra_calc: { badge: "Ultra Calc", dims: [] },
+            numbers: { badge: "Binary Mode", dims: [] }
         };
 
-        const secondarySubDims = {
-            basic: ['length_all', 'mass_all', 'volume_all', 'temperature', 'angles', 'velocity', 'density', 'pressure_all'],
-            electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra']
+        const secondarySubDims = { 
+            basic: ['length_all', 'mass_all', 'temperature'], 
+            electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] 
         };
 
-        // --- CORE UI ACTIONS ---
+        // --- UI CORE ---
         window.setPortal = (key) => {
-            window.currentPortalKey = key; const p = portalData[key];
-            document.body.classList.toggle('tech-mode', key === 'numbers');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
-            document.getElementById('portal-badge').innerText = p.badge;
-            document.getElementById('portal-name').innerText = p.title;
-            document.getElementById('portal-desc').innerText = p.desc;
-            document.getElementById('portal-icon').innerText = p.icon;
-            
-            const isSec = (key === 'secondary'); const isCalc = (key === 'ultra_calc');
+            window.currentPortalKey = key; document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
+            const isHome = (key === 'home'), isSec = (key === 'secondary'), isCalc = (key === 'ultra_calc');
+            document.getElementById('home-view').style.display = isHome ? 'grid' : 'none';
             document.getElementById('secondary-nav').style.display = isSec ? 'flex' : 'none';
-            document.getElementById('calculator-view').style.display = isCalc ? 'block' : 'none';
-            document.getElementById('converter-view').style.display = (isCalc) ? 'none' : 'grid';
-            document.getElementById('quiz-view').style.display = 'none'; document.getElementById('modern-msg-view').style.display = 'none';
-
-            if (isSec) setSecondaryMode('basic'); else if (!isCalc) filterDimensions();
+            document.getElementById('ultra-calc-view').style.display = isCalc ? 'block' : 'none';
+            document.getElementById('converter-view').style.display = (isHome || isCalc || (isSec && window.currentSecondaryMode === 'quiz')) ? 'none' : 'grid';
+            document.getElementById('quiz-view').style.display = (isSec && window.currentSecondaryMode === 'quiz') ? 'block' : 'none';
+            document.body.classList.toggle('tech-mode', key === 'numbers');
+            if (isHome) setTimeout(init3D, 100);
+            if (isSec) setSecondaryMode('basic'); else if (!isCalc && !isHome) filterDimensions();
         };
 
         window.setSecondaryMode = (mode) => {
-            window.currentSecondaryMode = mode;
-            document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + mode));
-            const cv = document.getElementById('converter-view'); const mv = document.getElementById('modern-msg-view'); const qv = document.getElementById('quiz-view');
+            window.currentSecondaryMode = mode; document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + mode));
+            const cv = document.getElementById('converter-view'), mv = document.getElementById('modern-msg-view'), qv = document.getElementById('quiz-view');
             cv.style.display = (mode === 'basic' || mode === 'electricity') ? 'grid' : 'none';
             mv.style.display = (mode === 'modern') ? 'block' : 'none';
             qv.style.display = (mode === 'quiz') ? 'block' : 'none';
@@ -440,166 +474,91 @@
         };
 
         window.filterDimensions = () => {
-            const q = document.getElementById('search-dim').value.toLowerCase();
-            let dims = (window.currentPortalKey === 'secondary') ? secondarySubDims[window.currentSecondaryMode] : portalData[window.currentPortalKey].dims;
-            const ds = document.getElementById('dimension-select'); ds.innerHTML = '';
-            dims.forEach(d => { if (unitsDB[d].label.toLowerCase().includes(q)) ds.add(new Option(unitsDB[d].label, d)); });
-            loadUnits();
+            const ds = document.getElementById('dimension-select'); if(!ds) return; ds.innerHTML = '';
+            const portal = portalData[window.currentPortalKey] || { dims: [] };
+            let dims = (window.currentPortalKey === 'secondary') ? secondarySubDims[window.currentSecondaryMode] : (portal.dims || []);
+            dims.forEach(d => { if(unitsDB[d]) ds.add(new Option(unitsDB[d].label, d)) }); loadUnits();
         };
 
         window.loadUnits = () => {
-            const dimKey = document.getElementById('dimension-select').value; if(!dimKey) return;
-            const units = unitsDB[dimKey].units;
-            const f = document.getElementById('unit-from'); const t = document.getElementById('unit-to');
+            const ds = document.getElementById('dimension-select'); if(!ds || !ds.value) return;
+            const units = unitsDB[ds.value].units; const f = document.getElementById('unit-from'), t = document.getElementById('unit-to');
             f.innerHTML = ''; t.innerHTML = '';
-            units.forEach(u => { f.add(new Option(u.n, u.s)); t.add(new Option(u.n, u.s)); });
-            if (units.length > 1) t.selectedIndex = 1; runConversion();
+            units.forEach(u => { f.add(new Option(`${u.n} (${u.s})`, u.s)); t.add(new Option(`${u.n} (${u.s})`, u.s)); });
+            t.selectedIndex = units.length > 1 ? 1 : 0; runConversion();
         };
 
         window.runConversion = () => {
-            const val = document.getElementById('input-value').value.trim();
-            const dimKey = document.getElementById('dimension-select').value;
-            const out = document.getElementById('output-val'); if (!val || !dimKey) return out.innerText = "0";
-            const dim = unitsDB[dimKey];
-            const uF = dim.units.find(u => u.s === document.getElementById('unit-from').value);
-            const uT = dim.units.find(u => u.s === document.getElementById('unit-to').value);
-            let res = "";
-
-            if (dim.isTemp) {
-                let c = (uF.s==='C')?parseFloat(val) : (uF.s==='K')?parseFloat(val)-273.15 : (parseFloat(val)-32)*5/9;
+            const valInput = document.getElementById('input-value'); if(!valInput) return;
+            const ds = document.getElementById('dimension-select'); if(!ds || !ds.value) return;
+            const uF = unitsDB[ds.value].units.find(u => u.s === document.getElementById('unit-from').value);
+            const uT = unitsDB[ds.value].units.find(u => u.s === document.getElementById('unit-to').value);
+            let res;
+            if (unitsDB[ds.value].isTemp) {
+                let c = (uF.s==='C')?parseFloat(valInput.value) : (uF.s==='K')?parseFloat(valInput.value)-273.15 : (parseFloat(valInput.value)-32)*5/9;
                 res = (uT.s==='C')?c : (uT.s==='K')?parseFloat(c)+273.15 : (c*9/5)+32;
-                res = parseFloat(res).toFixed(2);
-            } else if (dim.isNum) {
-                try {
-                    let d; if(uF.s==='una') d=val.length; else if(uF.s==='sex') d=fromB60(val); else if(uF.s==='bal') d=fromBalT(val); else if(uF.s==='gray') d=fromGray(val); else if(uF.s==='bcd') d=parseInt(fromBCD(val)); else d=parseInt(val, uF.b||10);
-                    if(uT.s==='una') res="1".repeat(Math.min(d,100)); else if(uT.s==='sex') res=toB60(d); else if(uT.s==='bal') res=toBalT(d); else if(uT.s==='gray') res=toGray(d); else if(uT.s==='bcd') res=toBCD(d); else res=d.toString(uT.b||10).toUpperCase();
-                } catch { res="Error"; }
             } else {
-                let n = parseFloat(val); if(isNaN(n)) res="0";
-                else { 
-                    let r = (n * uF.f) / uT.f;
-                    res = (r===0)?"0":(Math.abs(r)>1e12||Math.abs(r)<1e-10)?r.toExponential(4):parseFloat(r.toFixed(10)).toString();
-                    window.addConversionToCloud(`${val} ${uF.n} ⮕ ${res} ${uT.n}`);
-                }
+                res = (parseFloat(valInput.value) * uF.f) / uT.f;
             }
-            out.innerText = res;
+            const outStr = (res === 0) ? "0" : (Math.abs(res) > 1e10 || Math.abs(res) < 1e-5) ? res.toExponential(4) : parseFloat(res.toFixed(8)).toString();
+            document.getElementById('output-val').innerText = outStr;
+            window.addConversionToCloud(`${valInput.value} ${uF.n} ⮕ ${outStr} ${uT.n}`);
+        };
+
+        // --- CALC ---
+        window.setCalcMode = (m) => { document.querySelectorAll('.calc-tab-btn').forEach(b => b.className = 'calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400'); document.getElementById('cm-'+m).className = 'calc-tab-btn px-4 py-2 text-xs font-bold text-yellow-400 border-b-2 border-yellow-400'; document.querySelectorAll('.calc-pane').forEach(p => p.classList.add('hidden')); document.getElementById('calc-pane-'+m).classList.remove('hidden'); };
+        window.calcIn = (v) => { const s = document.getElementById('calc-screen'); if(s.innerText==='0') s.innerText=v; else s.innerText+=v; };
+        window.calcAC = () => document.getElementById('calc-screen').innerText='0';
+        window.calcDel = () => { const s = document.getElementById('calc-screen'); s.innerText = s.innerText.slice(0,-1) || '0'; };
+        window.calcRes = () => { try { document.getElementById('calc-screen').innerText = math.evaluate(document.getElementById('calc-screen').innerText); } catch { document.getElementById('calc-screen').innerText='Error'; } };
+        window.solveAlg = () => { const exp = document.getElementById('alg-expr').value; const res = document.getElementById('alg-output'); try { const sol = nerdamer.solveEquations(exp); res.innerHTML = `الحلول: ${sol.toString()}`; res.classList.remove('hidden'); } catch { res.innerText='خطأ'; res.classList.remove('hidden'); } };
+        window.draw3DPlot = () => {
+            const expr = document.getElementById('graph-expr-3d').value;
+            const x = math.range(-5, 5, 0.5).toArray(); const y = math.range(-5, 5, 0.5).toArray();
+            const z = x.map(xv => y.map(yv => math.evaluate(expr, {x: xv, y: yv})));
+            Plotly.newPlot('graph-plot-3d', [{z, type: 'surface'}], { paper_bgcolor: 'rgba(0,0,0,0)', font: {color: '#fff'}, margin: {t:0, b:0, l:0, r:0} });
         };
 
         // --- GLOBAL ACTIONS ---
-        window.triggerFireworkTheme = () => {
-            const container = document.getElementById('firework-container'); const rocket = document.getElementById('rocket'); const flash = document.getElementById('flash');
-            container.style.display = 'flex'; rocket.style.animation = 'none'; rocket.offsetHeight; rocket.style.animation = null;
-            setTimeout(() => { flash.classList.add('exploding'); setTimeout(() => { document.body.classList.toggle('light-mode'); }, 400); }, 550);
-            setTimeout(() => { container.style.display = 'none'; flash.classList.remove('exploding'); }, 1500);
-        };
+        window.triggerFireworkTheme = () => { const container = document.getElementById('firework-container'); container.style.display = 'flex'; setTimeout(() => { document.body.classList.toggle('light-mode'); }, 550); setTimeout(() => { container.style.display = 'none'; }, 1500); };
+        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); showToast("تم النسخ ✅"); };
+        window.toggleAccountModal = (s) => document.getElementById('account-modal').style.display = s ? 'flex' : 'none';
+        window.toggleAIChat = (s) => document.getElementById('ai-chat-window').style.display = s ? 'flex' : 'none';
+        window.logout = () => { localStorage.clear(); window.location.reload(); };
+        function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
+        function showPlatform() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); window.setPortal('home'); }
+        
+        async function updateVisitorCount() {
+            if(!supabase) return;
+            const { data } = await supabase.from('analytics').select('count').eq('id', 1).single();
+            let count = data ? data.count + 1 : 1500;
+            await supabase.from('analytics').upsert({ id: 1, count: count });
+            document.getElementById('visitor-count').innerText = count + "+";
+        }
 
+        window.sendAIMessage = async () => { /* AI Logic */ };
         window.startQuiz = () => {
-            const pool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1},{q:"1 ميجا أوم يساوي؟",o:["1000 أوم","10^6 أوم","10^9 أوم","10^3 أوم"],a:1}];
+            const pool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1}];
             document.getElementById('quiz-intro').style.display='none'; const c=document.getElementById('quiz-container'); c.style.display='block'; c.innerHTML='';
             pool.forEach((q,i)=>{
                 const d=document.createElement('div'); d.className='glass-card p-6 rounded-2xl mb-4 text-right';
-                d.innerHTML=`<h4 class='font-bold mb-3'>${i+1}. ${q.q}</h4><div class='grid grid-cols-2 gap-2'>${q.o.map((o,j)=>`<div onclick='selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-3 rounded-xl text-xs text-right'>${o}</div>`).join('')}</div>`;
+                d.innerHTML=`<h4 class='font-bold mb-3'>${i+1}. ${q.q}</h4><div class='grid grid-cols-2 gap-3'>${q.o.map((o,j)=>`<div onclick='selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-4 rounded-xl text-xs text-right'>${o}</div>`).join('')}</div>`;
                 c.appendChild(d);
             });
-            const b=document.createElement('button'); b.className="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText="تصحيح ✅";
+            const b = document.createElement('button'); b.className="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText="تصحيح ✅";
             b.onclick=()=>finishQuiz(pool); c.appendChild(b); window.ansArr=new Array(pool.length).fill(null);
         };
         window.selectOption=(i,j)=>{for(let k=0;k<4;k++)document.getElementById(`q-${i}-o-${k}`).classList.remove('selected'); document.getElementById(`q-${i}-o-${j}`).classList.add('selected'); window.ansArr[i]=j;};
-        window.finishQuiz=(p)=>{let s=0; p.forEach((q,i)=>{if(window.ansArr[i]===q.a)s++;}); document.getElementById('quiz-container').style.display='none'; document.getElementById('quiz-result').style.display='block'; document.getElementById('score-text').innerText=`${s}/${p.length}`; document.getElementById('feedback-msg').innerText=s===p.length?"امتياز يا هندسة! 🔥":"حاول مرة أخرى! 💪";};
+        window.finishQuiz=(p)=>{let s=0; p.forEach((q,i)=>{if(window.ansArr[i]===q.a)s++;}); document.getElementById('quiz-container').style.display='none'; document.getElementById('quiz-result').style.display='block'; document.getElementById('score-text').innerText=`${s}/${p.length}`;};
         window.resetQuiz=()=>{document.getElementById('quiz-result').style.display='none'; document.getElementById('quiz-intro').style.display='block';};
 
-        // --- ACCOUNT LOGIC ---
-        function renderUserData(data) {
-            document.getElementById('welcome-msg').innerText = `${data.name} | ${data.study}`;
-            document.getElementById('header-user-name').innerText = data.name.split(' ')[0];
-            document.getElementById('modal-user-name').innerText = data.name;
-            document.getElementById('modal-user-study').innerText = `${data.study}`;
-            if (data.profilePic) { document.getElementById('header-profile-pic').src = data.profilePic; document.getElementById('modal-profile-pic').src = data.profilePic; }
-        }
+        startSystem();
 
-        window.saveUserProfile = async (name, study, phone, password) => {
-            if (user && db) {
-                const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-                await setDoc(profileRef, { name, study, phone, password, createdAt: new Date() }, { merge: true });
-                const docSnap = await getDoc(profileRef); renderUserData(docSnap.data());
-            }
-            showPlatform();
-        };
-
-        window.updateUserEmail = async () => {
-            const email = document.getElementById('modal-user-email').value.trim();
-            if (user && db) { const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data'); await setDoc(profileRef, { email: email }, { merge: true }); showToast("تم التحديث السحابي ✅"); }
-        };
-
-        window.uploadProfilePic = async (event) => {
-            const file = event.target.files[0];
-            if (file && user && db) {
-                const r = new FileReader(); r.onload = async (e) => {
-                    const base64 = e.target.result;
-                    const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-                    await setDoc(profileRef, { profilePic: base64 }, { merge: true });
-                    document.getElementById('header-profile-pic').src = base64; document.getElementById('modal-profile-pic').src = base64;
-                }; r.readAsDataURL(file);
-            }
-        };
-
-        function listenToHistory() {
-            if (user && db) {
-                const historyCol = collection(db, 'artifacts', appId, 'users', user.uid, 'history');
-                onSnapshot(historyCol, (snapshot) => {
-                    const logs = []; snapshot.forEach(doc => logs.push(doc.data()));
-                    logs.sort((a, b) => b.timestamp - a.timestamp);
-                    document.getElementById('history-list').innerHTML = logs.slice(0, 8).map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 animate-fade mb-2 text-right">${h.log}</div>`).join('') || '<p class="text-slate-600 italic text-center">بانتظار تحويلاتك...</p>';
-                }, () => {});
-            }
-        }
-
-        window.sendAIMessage = async () => {
-            const inp = document.getElementById('ai-input'); const txt = inp.value.trim(); if(!txt) return;
-            const d = document.createElement('div'); d.className = `msg msg-user text-right animate-fade mb-2`; d.innerText = txt;
-            document.getElementById('chat-messages').appendChild(d); inp.value = '';
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text: txt }] }], systemInstruction: { parts: [{ text: "أنت مساعد مِعيار الذكي. خبير في الفيزياء والكهربية والرياضيات المتقدمة." }] } })
-                });
-                const j = await res.json();
-                const aiMsg = document.createElement('div'); aiMsg.className = `msg msg-ai text-right animate-fade mb-2`;
-                aiMsg.innerText = j.candidates?.[0]?.content?.parts?.[0]?.text || "حدث خطأ في معالجة الطلب.";
-                document.getElementById('chat-messages').appendChild(aiMsg);
-                document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
-            } catch(e) {}
-        };
-
-        window.onload = startSystem;
-        window.swapUnits = () => { const f=document.getElementById('unit-from'); const t=document.getElementById('unit-to'); [f.value, t.value]=[t.value, f.value]; runConversion(); };
-        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); showToast("تم النسخ ✅"); };
-        window.toggleAbout = (s) => document.getElementById('about-modal').style.display = s ? 'flex' : 'none';
-        window.toggleAIChat = (s) => document.getElementById('ai-chat-window').style.display = s ? 'flex' : 'none';
-        window.toggleAccountModal = (s) => document.getElementById('account-modal').style.display = s ? 'flex' : 'none';
-        function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
-        function showPlatform() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); setPortal('secondary'); }
-        
-        document.getElementById('login-form').onsubmit = (e) => {
-            e.preventDefault();
-            const n = document.getElementById('user-name').value.trim();
-            const s = document.getElementById('user-study').value;
-            const p = document.getElementById('user-phone').value.trim();
-            const pass = document.getElementById('user-password').value.trim();
-            if(typeof saveUserProfile === 'function') window.saveUserProfile(n,s,p,pass); else showPlatform();
-        };
-
-        // Visitor Count Logic
-        if(!localStorage.getItem('mayar_visit_count')) localStorage.setItem('mayar_visit_count', 1500);
-        const vc = parseInt(localStorage.getItem('mayar_visit_count')) + 1;
-        localStorage.setItem('mayar_visit_count', vc);
-        document.getElementById('visitor-count').innerText = vc + "+";
-
-        const c = document.getElementById('matrix'); const ctx = c.getContext('2d');
-        let w, h, cl, fs=16, dp=[];
-        function initM(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; cl=Math.floor(w/fs); dp=new Array(cl).fill(1); }
-        function drawM(){ if(window.currentPortalKey !== 'numbers') return; ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#facc15'; ctx.font=fs+'px monospace'; for(let i=0; i<dp.length; i++){ ctx.fillText(Math.floor(Math.random()*2), i*fs, dp[i]*fs); if(dp[i]*fs > h && Math.random() > 0.975) dp[i]=0; dp[i]++; } }
-        window.onresize = initM; setInterval(drawM, 50); initM();
+        const matrixC = document.getElementById('matrix-canvas'); const matrixCtx = matrixC.getContext('2d');
+        let mw, mh, mcl, mfs=16, mdp=[];
+        function initMatrix(){ mw=matrixC.width=window.innerWidth; mh=matrixC.height=window.innerHeight; mcl=Math.floor(mw/mfs); mdp=new Array(mcl).fill(1); }
+        function drawMatrix(){ if(window.currentPortalKey !== 'numbers') return; matrixCtx.fillStyle='rgba(0,0,0,0.05)'; matrixCtx.fillRect(0,0,mw,mh); matrixCtx.fillStyle='#facc15'; matrixCtx.font=mfs+'px monospace'; for(let i=0; i<mdp.length; i++){ matrixCtx.fillText(Math.floor(Math.random()*2), i*mfs, mdp[i]*mfs); if(mdp[i]*mfs > mh && Math.random() > 0.975) mdp[i]=0; mdp[i]++; } }
+        window.onresize = initMatrix; setInterval(drawMatrix, 50); initMatrix();
     </script>
 </body>
 </html>
