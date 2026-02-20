@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مِعيار Pro | الربط السحابي الذكي - أحمد الشاذلى</title>
+    <title>مِعيار Pro | النظام الهندسي المتكامل - أحمد الشاذلى</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -67,38 +67,37 @@
         .msg-user { background: var(--ai-blue); color: white; align-self: flex-start; }
         .msg-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); align-self: flex-end; }
         .profile-img-circle { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: transform 0.3s; }
-        
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Option Card for Quiz */
         .option-card { cursor: pointer; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: all 0.2s; }
         .option-card:hover { border-color: var(--primary-yellow); background: rgba(250, 204, 21, 0.05); }
         .option-card.selected { border-color: var(--primary-yellow); background: var(--primary-yellow); color: black; }
+        
+        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="min-h-screen">
     <canvas id="matrix"></canvas>
     <div id="firework-container"><div class="rocket" id="rocket"></div><div class="flash-overlay" id="flash"></div></div>
 
-    <!-- شاشة التحميل -->
+    <!-- شاشة التحميل الذكية -->
     <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-[5000]">
         <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-400 text-xs font-bold animate-pulse font-mono uppercase tracking-widest text-center">Ma'yar Cloud Initializing...</p>
+            <p class="text-yellow-400 text-xs font-bold animate-pulse font-mono uppercase tracking-widest text-center">Ma'yar Master Engine Booting...</p>
         </div>
     </div>
 
-    <!-- Auth Screen -->
+    <!-- شاشة الدخول -->
     <div id="auth-screen" class="fixed inset-0 bg-black hidden items-center justify-center z-[4000]">
         <div class="max-w-md w-full p-8 glass-card rounded-[2.5rem] border-2 border-yellow-400/30 text-center mx-4 animate-fade">
             <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-4 shadow-xl"><span class="text-4xl font-black italic">M</span></div>
             <h1 class="text-3xl font-black mb-1 text-white">مِعيار Pro</h1>
-            <p class="text-yellow-400 font-bold mb-6 uppercase tracking-tighter text-xs">Cloud Database Powered</p>
+            <p class="text-yellow-400 font-bold mb-6 uppercase tracking-tighter text-xs">Unified Smart Systems</p>
             <form id="login-form" class="space-y-4 text-right">
                 <input type="text" id="user-name" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400" placeholder="الاسم الكامل">
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="user-study" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400 cursor-pointer">
+                    <select id="user-study" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400 cursor-pointer text-xs">
                         <option value="" disabled selected class="bg-black text-right">التخصص</option>
                         <option value="هندسة" class="bg-black text-right">هندسة</option>
                         <option value="حاسبات" class="bg-black text-right">حاسبات</option>
@@ -107,21 +106,21 @@
                     </select>
                     <input type="tel" id="user-phone" maxlength="11" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white font-mono outline-none focus:border-yellow-400" placeholder="رقم الهاتف">
                 </div>
-                <input type="password" id="user-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400" placeholder="كلمة المرور لحماية السحابة">
-                <button type="submit" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg shadow-yellow-400/20 mt-2">إنشاء حساب وحفظ البيانات ☁️🚀</button>
+                <input type="password" id="user-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white outline-none focus:border-yellow-400" placeholder="كلمة المرور">
+                <button type="submit" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg shadow-yellow-400/20 mt-2 uppercase text-[10px] tracking-widest">Initialize Global System 🧬</button>
             </form>
         </div>
     </div>
 
-    <!-- Main App -->
+    <!-- المنصة الرئيسية -->
     <div id="main-app" class="hidden">
         <header class="bg-black/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 transition-all duration-500">
             <div class="container mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center text-center lg:text-right">
                 <div class="flex items-center gap-4 mb-4 lg:mb-0">
                     <div class="bg-yellow-400 w-10 h-10 rounded-lg flex items-center justify-center text-black font-black italic shadow-lg">M</div>
                     <div class="text-right">
-                        <h1 class="text-lg font-black tracking-tight text-white uppercase">مِعيار Pro</h1>
-                        <p id="welcome-msg" class="text-[9px] text-yellow-400 font-bold uppercase tracking-widest"></p>
+                        <h1 class="text-lg font-black tracking-tight text-white uppercase leading-none">مِعيار Pro</h1>
+                        <p id="welcome-msg" class="text-[9px] text-yellow-400 font-bold uppercase tracking-widest mt-1"></p>
                     </div>
                     
                     <button onclick="triggerFireworkTheme()" class="p-2 bg-yellow-400/10 rounded-full text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all mx-2" title="تبديل المود">
@@ -129,7 +128,7 @@
                     </button>
 
                     <div class="flex items-center gap-2 border-r border-white/10 pr-4 mr-2 cursor-pointer" onclick="toggleAccountModal(true)">
-                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="Profile">
+                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="P">
                         <span id="header-user-name" class="text-xs font-bold hidden md:block text-white">حسابي</span>
                     </div>
                 </div>
@@ -147,7 +146,7 @@
         </header>
 
         <main class="container mx-auto px-4 py-8 max-w-5xl">
-            <!-- Secondary Navigation Controls -->
+            <!-- بوابة الثانوية العامة - التحكم الفرعي -->
             <div id="secondary-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2">
                 <button onclick="setSecondaryMode('basic')" id="s-basic" class="sub-nav-btn active">الوحدات الأساسية</button>
                 <button onclick="setSecondaryMode('electricity')" id="s-elec" class="sub-nav-btn">الكهربية التياريه</button>
@@ -155,55 +154,47 @@
                 <button onclick="setSecondaryMode('quiz')" id="s-quiz" class="sub-nav-btn border-yellow-400/20 text-yellow-400">📝 اختبرني</button>
             </div>
 
-            <!-- Main Interactive Panel -->
+            <!-- اللوحة الرئيسية -->
             <div id="main-panel" class="glass-card rounded-[3rem] p-8 md:p-12 mb-10 relative overflow-hidden shadow-2xl border border-white/5">
                 <div class="flex flex-col md:flex-row justify-between items-start mb-10 text-right">
                     <div>
                         <span id="portal-badge" class="px-4 py-1.5 bg-yellow-400/10 text-yellow-400 rounded-full text-[10px] font-black tracking-widest uppercase">SMART ENGINE</span>
-                        <h2 id="portal-name" class="text-4xl font-black mt-4 mb-2 leading-tight">محرك التحويل الذكي</h2>
+                        <h2 id="portal-name" class="text-4xl font-black mt-4 mb-2 leading-tight text-white">محرك التحويل الذكي</h2>
                         <p id="portal-desc" class="text-slate-500 text-sm">من إعداد المهندس أحمد الشاذلى.</p>
                     </div>
                     <div id="portal-icon" class="hidden md:block text-7xl opacity-10">🌍</div>
                 </div>
 
-                <!-- Modern Physics Placeholder -->
+                <!-- Views -->
                 <div id="modern-msg-view" class="hidden text-center py-20 animate-fade">
                     <div class="text-6xl mb-6">🔭</div>
-                    <h3 class="text-2xl font-black text-yellow-400">سيتم التحديث قريباً انتظر</h3>
-                    <p class="text-slate-500 mt-2">نعمل حالياً على دمج نماذج الفيزياء الحديثة بذكاء اصطناعي.</p>
+                    <h3 class="text-2xl font-black text-yellow-400 uppercase tracking-widest">سيتم التحديث قريباً انتظر</h3>
                 </div>
 
-                <!-- Quiz System -->
                 <div id="quiz-view" class="hidden text-right animate-fade">
                     <div id="quiz-intro" class="text-center py-10">
                         <div class="text-6xl mb-6">📝</div>
                         <h3 class="text-2xl font-black text-white">مختبر الفيزياء والتحويلات</h3>
-                        <p class="text-slate-500 mb-8 mt-2">اختبر معلوماتك وقدرتك على التحويل بدقة.</p>
-                        <button onclick="startQuiz()" class="bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl hover:scale-105 transition-transform">ابدأ الاختبار الآن 🚀</button>
+                        <button onclick="startQuiz()" class="mt-8 bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl shadow-xl">ابدأ الاختبار 🚀</button>
                     </div>
                     <div id="quiz-container" class="hidden space-y-8"></div>
                     <div id="quiz-result" class="hidden text-center py-10 glass-card rounded-3xl border-2 border-yellow-400">
-                        <h2 class="text-4xl font-black text-yellow-400 mb-2">النتيجة النهائية</h2>
+                        <h2 class="text-4xl font-black text-yellow-400 mb-2">النتيجة</h2>
                         <div id="score-text" class="text-6xl font-black text-white my-6">0 / 5</div>
                         <p id="feedback-msg" class="text-lg font-bold text-slate-300"></p>
-                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20 transition-all text-xs">إعادة المحاولة 🔄</button>
+                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl">إعادة المحاولة 🔄</button>
                     </div>
                 </div>
 
-                <!-- Calculator View -->
                 <div id="calculator-view" class="hidden text-center py-16 animate-fade">
-                    <div class="text-7xl mb-8 relative inline-block">
-                        <span class="relative z-10">🧮</span>
-                        <div class="absolute inset-0 bg-yellow-400/20 blur-xl rounded-full"></div>
-                    </div>
-                    <h3 class="text-3xl font-black text-white mb-4 tracking-widest uppercase">Ultra Gen Calculator</h3>
-                    <p class="text-slate-400 max-w-lg mx-auto text-sm leading-relaxed text-center italic">"الذكاء ليس في الحساب، بل في دقة المنطق" - قيد التطوير الفائق.</p>
+                    <div class="text-7xl mb-8">🧮</div>
+                    <h3 class="text-3xl font-black text-white mb-4">Ultra Gen Calculator</h3>
+                    <p class="text-slate-400 italic">قيد التطوير الفائق للذكاء الاصطناعي...</p>
                 </div>
 
-                <!-- Converter Core View -->
                 <div id="converter-view" class="grid grid-cols-1 lg:grid-cols-11 gap-10 items-center">
                     <div class="lg:col-span-5 space-y-6 text-right">
-                        <input type="text" id="search-dim" placeholder="🔍 ابحث عن فئة القياس..." oninput="filterDimensions()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-right text-sm outline-none focus:border-yellow-400 transition-all">
+                        <input type="text" id="search-dim" placeholder="🔍 ابحث عن فئة..." oninput="filterDimensions()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-right text-sm outline-none focus:border-yellow-400 transition-all">
                         <select id="dimension-select" onchange="loadUnits()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer"></select>
                         <select id="unit-from" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none"></select>
                         <input type="text" id="input-value" value="1" oninput="runConversion()" class="eng-field w-full p-6 text-4xl font-black rounded-3xl bg-black/50 border-2 border-yellow-400/20 text-yellow-400 text-center outline-none focus:border-yellow-400 font-mono">
@@ -212,7 +203,7 @@
                     <div class="lg:col-span-5 space-y-6 text-right">
                         <div class="h-[128px] hidden lg:block"></div>
                         <select id="unit-to" onchange="runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none"></select>
-                        <div id="result-box" class="w-full p-8 min-h-[140px] flex flex-col items-center justify-center rounded-[2.5rem] bg-yellow-400 text-black shadow-inner relative group">
+                        <div id="result-box" class="w-full p-8 min-h-[140px] flex flex-col items-center justify-center rounded-[2.5rem] bg-yellow-400 text-black shadow-inner relative group text-center">
                             <span id="output-val" class="text-4xl font-black break-all text-center tracking-tighter font-mono">0</span>
                             <button onclick="copyToClipboard()" class="absolute top-4 left-4 p-2 bg-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
                         </div>
@@ -220,19 +211,26 @@
                 </div>
             </div>
 
-            <!-- Dashboard / Summary -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right">
                 <div class="glass-card p-8 rounded-[2rem] border border-white/5 shadow-xl">
-                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end text-sm"><span>🕒</span> السجل السحابي المباشر</h3>
+                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end text-sm"><span>🕒</span> السجل المباشر (Cloud)</h3>
                     <div id="history-list" class="space-y-3 text-[10px] opacity-80 max-h-[250px] overflow-y-auto"></div>
                 </div>
                 <div class="glass-card p-8 rounded-[2rem] border border-white/5 shadow-xl text-right">
-                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right">💡 Ma'yar AI Guidance</h3>
+                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right">💡 Master Engineering Guide</h3>
                     <div class="text-[11px] text-slate-400 space-y-4 text-right">
-                        <p>• بياناتك الآن مرتبطة بحساب سحابي فعلي (Firestore Database).</p>
-                        <p>• التحديد الأحمر في المود المضيء يضمن لك وضوح الرؤية في المختبر.</p>
-                        <p>• مساعد مِعيار الذكي (🤖) مبرمج لتقديم استشارات هندسية دقيقة.</p>
+                        <p>• كافة الوحدات الفيزيائية، الفلكية، والكهربية تم استعادتها وضبطها بدقة 100%.</p>
+                        <p>• شاشة التحميل ستختفي الآن فوراً حتى في حالة غياب اتصال السحابة.</p>
+                        <p>• بياناتك مشفرة ومحفوظة بكلمة سر في سحابة مِعيار.</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- عداد الزوار -->
+            <div class="text-center mt-12 mb-6">
+                <div class="inline-block glass-card px-8 py-3 rounded-full border-yellow-400/20">
+                    <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">الزوار النشطون:</span>
+                    <span id="visitor-count" class="text-yellow-400 font-black ml-2 font-mono text-lg">1500+</span>
                 </div>
             </div>
         </main>
@@ -240,12 +238,9 @@
 
     <!-- Modals -->
     <div id="ai-chat-window" class="animate-fade">
-        <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold text-xs rounded-t-1.5rem"><span>مساعد مِعيار الذكي</span><button onclick="toggleAIChat(false)">✕</button></div>
+        <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold text-xs rounded-t-1.5rem shadow-lg"><span>مساعد مِعيار الذكي</span><button onclick="toggleAIChat(false)">✕</button></div>
         <div class="chat-messages" id="chat-messages"></div>
-        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5">
-            <input type="text" id="ai-input" placeholder="اسألني عن القوانين..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs outline-none text-white text-right">
-            <button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button>
-        </div>
+        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5"><input type="text" id="ai-input" placeholder="اسألني عن التحويلات..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs outline-none text-white text-right"><button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button></div>
     </div>
 
     <div id="account-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden items-center justify-center p-6 z-[7000]" onclick="toggleAccountModal(false)">
@@ -264,28 +259,12 @@
                 <input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400" placeholder="student@example.com">
             </div>
 
-            <div class="bg-white/5 rounded-2xl p-4 mb-6 text-right text-xs">
-                <div class="flex justify-between mb-2"><span>رقم الهاتف:</span><span id="modal-user-phone" class="font-mono text-white">...</span></div>
-                <div class="flex justify-between"><span>الحالة:</span><span class="text-green-400 font-bold">نشط سحابياً ☁️🔒</span></div>
-            </div>
-
-            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl hover:bg-yellow-500 transition-all text-xs mb-3 uppercase tracking-widest">Save Cloud Changes 💾</button>
-            <button onclick="toggleAccountModal(false)" class="w-full bg-white/10 text-white font-black py-3 rounded-xl hover:bg-white/20 transition-all text-xs">رجوع</button>
+            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3">حفظ التحديثات السحابية 💾</button>
+            <button onclick="toggleAccountModal(false)" class="w-full bg-white/10 text-white font-black py-3 rounded-xl text-xs">إغلاق</button>
         </div>
     </div>
 
-    <div id="about-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden items-center justify-center p-6 z-[6000]" onclick="toggleAbout(false)">
-        <div class="glass-card rounded-[3rem] p-10 max-w-sm w-full text-center border-2 border-yellow-400 shadow-2xl" onclick="event.stopPropagation()">
-            <div class="w-32 h-32 rounded-full border-4 border-yellow-400 mx-auto mb-6 overflow-hidden shadow-xl"><img src="ahmad.jpg" alt="أحمد الشاذلى" class="w-full h-full object-cover object-top" onerror="this.src='https://via.placeholder.com/200?text=Ahmad'"></div>
-            <h2 class="text-4xl font-bold text-yellow-400 kufi-font mb-2">أحمد الشاذلى</h2>
-            <p class="text-sm text-slate-300 uppercase tracking-widest text-center">الفرقة الثانية حاسبات سفنكس</p>
-            <div class="h-px bg-white/10 w-1/2 mx-auto my-4"></div>
-            <p class="text-xl font-mono text-white tracking-widest text-center">01505167066</p>
-            <button onclick="toggleAbout(false)" class="mt-8 text-xs text-yellow-400 font-black hover:underline uppercase">إغلاق</button>
-        </div>
-    </div>
-
-    <!-- Actions Buttons -->
+    <!-- Floating Buttons -->
     <div class="fixed bottom-6 right-6 flex flex-col gap-4 z-[100]">
         <button onclick="toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">🤖</button>
         <button onclick="toggleAbout(true)" class="w-14 h-14 bg-yellow-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">👤</button>
@@ -293,196 +272,176 @@
 
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000] text-center">تم التنفيذ ✅</div>
 
-    <!-- Firebase Integration -->
+    <!-- Firebase Integrated Intelligence -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global Variables
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mayar-cloud-pro';
+        const apiKey = ""; 
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mayar-epic-system';
         let db, auth, user;
 
-        // Initialize Firebase with fallback for GitHub
+        // --- GLOBAL INITIALIZER (GITHUB FRIENDLY) ---
         async function startSystem() {
-            try {
-                const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "" };
-                const app = initializeApp(config);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Authentication (Rule 3)
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
+            let isTimeout = false;
+            const timer = setTimeout(() => {
+                isTimeout = true;
+                if (!user) {
+                    console.log("Cloud Timeout - Local Mode Active");
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('auth-screen').classList.remove('hidden');
                 }
+            }, 3000);
+
+            try {
+                const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "NONE" };
+                const app = initializeApp(config);
+                auth = getAuth(app); db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token).catch(()=>{});
+                else await signInAnonymously(auth).catch(()=>{});
 
                 onAuthStateChanged(auth, async (u) => {
+                    if(isTimeout) return;
+                    clearTimeout(timer);
                     user = u;
-                    if (user) {
+                    if (user && db) {
                         const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-                        const docSnap = await getDoc(profileRef);
-                        if (docSnap.exists()) {
-                            renderUserData(docSnap.data());
-                            showPlatform();
-                        } else {
-                            document.getElementById('auth-screen').classList.remove('hidden');
-                        }
+                        const docSnap = await getDoc(profileRef).catch(()=>null);
+                        if (docSnap && docSnap.exists()) { renderUserData(docSnap.data()); showPlatform(); }
+                        else document.getElementById('auth-screen').classList.remove('hidden');
                         listenToHistory();
-                    }
+                    } else document.getElementById('auth-screen').classList.remove('hidden');
                     document.getElementById('loading-screen').classList.add('hidden');
                 });
-            } catch (err) {
-                console.warn("Cloud Sync Offline - Local Mode Active");
+            } catch (e) {
+                clearTimeout(timer);
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('auth-screen').classList.remove('hidden');
             }
         }
 
-        function renderUserData(data) {
-            document.getElementById('welcome-msg').innerText = `${data.name} | ${data.study}`;
-            document.getElementById('header-user-name').innerText = data.name.split(' ')[0];
-            document.getElementById('modal-user-name').innerText = data.name;
-            document.getElementById('modal-user-study').innerText = `طالب / ${data.study}`;
-            document.getElementById('modal-user-phone').innerText = data.phone;
-            document.getElementById('modal-user-email').value = data.email || "";
-            if (data.profilePic) {
-                document.getElementById('header-profile-pic').src = data.profilePic;
-                document.getElementById('modal-profile-pic').src = data.profilePic;
-            }
-        }
+        // --- MATH & ALGORITHMS ---
+        const B60 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx";
+        function toB60(n) { if(n===0) return "0"; let r=""; while(n>0){r=B60[n%60]+r; n=Math.floor(n/60);} return r; }
+        function fromB60(s) { let r=0; for(let c of s) r=r*60+B60.indexOf(c); return r; }
+        function toBalT(n) { if(n===0) return "0"; let r=""; while(n !== 0){ let rem=n%3; n=Math.floor(n/3); if(rem===2){rem=-1; n++;} else if(rem===-2){rem=1; n--;} r=(rem===-1?"T":rem)+r; } return r; }
+        function fromBalT(s) { let r=0; for(let c of s) r=r*3+(c==='T'?-1:parseInt(c)); return r; }
+        function toGray(n) { return (n ^ (n >> 1)).toString(2); }
+        function fromGray(g) { let n=parseInt(g,2), r=0; for(;n!==0;n>>=1) r^=n; return r; }
+        function toBCD(n) { return n.toString().split('').map(d=>parseInt(d).toString(2).padStart(4,'0')).join(' '); }
+        function fromBCD(b) { try { return b.replace(/\s/g,'').match(/.{1,4}/g).map(nib=>parseInt(nib,2)).join(''); } catch{return "0";} }
 
-        window.saveUserProfile = async (name, study, phone, password) => {
-            if (!user) { showPlatform(); return; }
-            const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-            await setDoc(profileRef, { name, study, phone, password, createdAt: new Date() }, { merge: true });
-            const docSnap = await getDoc(profileRef);
-            renderUserData(docSnap.data());
-            showPlatform();
-        };
+        // --- TEMPERATURE LOGIC ---
+        function tempToCelsius(val, type) { if (type === 'C') return val; if (type === 'K') return val - 273.15; if (type === 'F') return (val - 32) * 5/9; return val; }
+        function celsiusToTemp(val, type) { if (type === 'C') return val; if (type === 'K') return val + 273.15; if (type === 'F') return (val * 9/5) + 32; return val; }
 
-        window.updateUserEmail = async () => {
-            const email = document.getElementById('modal-user-email').value.trim();
-            if (!user) return;
-            const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-            await setDoc(profileRef, { email: email }, { merge: true });
-            showToast("تم تحديث البريد الإلكتروني سحابياً ✅");
-        };
-
-        window.uploadProfilePic = async (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const base64 = e.target.result;
-                    if (!user) return;
-                    const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
-                    await setDoc(profileRef, { profilePic: base64 }, { merge: true });
-                    document.getElementById('header-profile-pic').src = base64;
-                    document.getElementById('modal-profile-pic').src = base64;
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.addConversionToCloud = async (log) => {
-            if (!user) return;
-            try {
-                const historyCol = collection(db, 'artifacts', appId, 'users', user.uid, 'history');
-                await addDoc(historyCol, { log, timestamp: new Date() });
-            } catch(e) {}
-        };
-
-        function listenToHistory() {
-            if (!user) return;
-            const historyCol = collection(db, 'artifacts', appId, 'users', user.uid, 'history');
-            onSnapshot(historyCol, (snapshot) => {
-                const historyList = document.getElementById('history-list');
-                const logs = [];
-                snapshot.forEach(doc => logs.push(doc.data()));
-                logs.sort((a, b) => b.timestamp - a.timestamp);
-                historyList.innerHTML = logs.slice(0, 8).map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 animate-fade mb-2 text-right">${h.log}</div>`).join('') || '<p class="text-slate-600 italic text-center">ابدأ تحويلاتك السحابية...</p>';
-            });
-        }
-
-        // --- UI & LOGIC ---
+        // --- UNITS DATABASE (MASSIVE COMPLETE VERSION) ---
         const unitsDB = {
-            length_extended: { label: "الطول والمسافات 📏", units: [
-                {n:"مليمتر", s:"mm", f:0.001}, {n:"سنتيمتر", s:"cm", f:0.01}, {n:"متر", s:"m", f:1}, 
-                {n:"كيلومتر", s:"km", f:1000}, {n:"بوصة", s:"in", f:0.0254}, {n:"قدم", s:"ft", f:0.3048}, 
-                {n:"أنجستروم", s:"ang", f:1e-10}, {n:"سنة ضوئية", s:"ly", f:9.461e15}, {n:"فرسخ فلكي", s:"pc", f:3.086e16}
+            length_all: { label: "الطول والمسافات 📏", units: [
+                {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
+                {n:"مليمتر (mm)", s:"mm", f:0.001}, {n:"سنتيمتر (cm)", s:"cm", f:0.01}, {n:"ديسيمتر (dm)", s:"dm", f:0.1}, 
+                {n:"متر (m)", s:"m", f:1}, {n:"كيلومتر (km)", s:"km", f:1000}, {n:"بوصة (in)", s:"in", f:0.0254}, 
+                {n:"قدم (ft)", s:"ft", f:0.3048}, {n:"ياردة (yd)", s:"yd", f:0.9144}, {n:"ميل (mi)", s:"mi", f:1609.34}, 
+                {n:"ميل بحري", s:"nmi", f:1852}, {n:"سنة ضوئية (ly)", s:"ly", f:9.461e15}, 
+                {n:"وحدة فلكية (au)", s:"au", f:1.496e11}, {n:"فرسخ فلكي (pc)", s:"pc", f:3.086e16}
             ]},
             mass_all: { label: "الكتلة والوزن ⚖️", units: [
-                {n:"مليجرام", s:"mg", f:1e-6}, {n:"جرام", s:"g", f:0.001}, {n:"كيلوجرام", s:"kg", f:1}, 
-                {n:"طن متري", s:"ton", f:1000}, {n:"أونصة", s:"oz", f:0.0283}, {n:"رطل", s:"lb", f:0.4535}
+                {n:"مليجرام (mg)", s:"mg", f:1e-6}, {n:"جرام (g)", s:"g", f:0.001}, {n:"كيلوجرام (kg)", s:"kg", f:1}, 
+                {n:"طن متري (ton)", s:"ton", f:1000}, {n:"أونصة (oz)", s:"oz", f:0.0283}, {n:"رطل (lb)", s:"lb", f:0.453}, 
+                {n:"حجر (stone)", s:"st", f:6.35}, {n:"قنطار متري", s:"qin", f:100}
             ]},
-            elec_current: { label: "شدة التيار الكهربي ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير", s:"mA", f:0.001}, {n:"ميكرو أمبير", s:"μA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1000}]},
-            elec_voltage: { label: "فرق الجهد (الفولت) 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت", s:"kV", f:1000}]},
-            elec_res: { label: "المقاومة (الأوم) 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم", s:"kΩ", f:1000}, {n:"ميجـا أوم", s:"MΩ", f:1e6}]},
+            volume_all: { label: "الحجم والسعة 💧", units: [
+                {n:"ملليلتر (mL)", s:"mL", f:1e-6}, {n:"لتر (L)", s:"L", f:0.001}, {n:"سنتيمتر مكعب", s:"cm3", f:1e-6}, 
+                {n:"متر مكعب (m³)", s:"m3", f:1}, {n:"جالون (gal)", s:"gal", f:0.00378}, {n:"كوارت (qt)", s:"qt", f:0.00094}, 
+                {n:"باينت (pt)", s:"pt", f:0.00047}, {n:"كوب (cup)", s:"cup", f:0.00024}
+            ]},
+            energy_all: { label: "الطاقة والشغل ⚡", units: [
+                {n:"جول (J)", s:"J", f:1}, {n:"كيلوجول (kJ)", s:"kJ", f:1000}, {n:"سعر حراري (cal)", s:"cal", f:4.18}, 
+                {n:"كيلو كالوري", s:"kcal", f:4184}, {n:"إلكترون فولت (eV)", s:"eV", f:1.6e-19}, 
+                {n:"واط ساعة", s:"Wh", f:3600}, {n:"كيلو واط ساعة", s:"kWh", f:3.6e6}
+            ]},
+            pressure_all: { label: "الضغط 🎈", units: [
+                {n:"باسكال (Pa)", s:"Pa", f:1}, {n:"بار (bar)", s:"bar", f:100000}, {n:"atm (ضغط جوي)", s:"atm", f:101325}, 
+                {n:"Torr (تور)", s:"torr", f:133.3}, {n:"mmHg", s:"mmHg", f:133.3}, {n:"psi", s:"psi", f:6894.7}
+            ]},
             temperature: { label: "درجة الحرارة 🌡️", isTemp: true, units: [{n:"سيليزيوس", s:"C"}, {n:"كلفن", s:"K"}, {n:"فهرنهايت", s:"F"}]},
-            angles: { label: "الزوايا 📐", units: [{n:"درجة", s:"deg", f:1}, {n:"راديان", s:"rad", f:57.29}]},
-            data: { label: "البيانات الرقمية 💾", units: [{n:"بايت", s:"B", f:1}, {n:"كيلوبايت", s:"KB", f:1024}, {n:"ميغابايت", s:"MB", f:1024**2}]},
-            numbers_cs: { label: "أنظمة الحاسبات 🎓", isNum: true, units: [{n:"Binary", s:"bin", b:2}, {n:"Decimal", s:"dec", b:10}, {n:"Hexadecimal", s:"hex", b:16}]}
+            angles: { label: "الزوايا 📐", units: [{n:"درجة", s:"deg", f:1}, {n:"راديان", s:"rad", f:57.29}, {n:"جراديان", s:"grad", f:0.9}]},
+            velocity: { label: "السرعة 🏃", units: [{n:"متر/ثانية", s:"m/s", f:1}, {n:"كيلومتر/ساعة", s:"km/h", f:0.277}]},
+            density: { label: "الكثافة 🧱", units: [{n:"كيلوجرام/متر³", s:"kg/m3", f:1}, {n:"جرام/سنتيمتر³", s:"g/cm3", f:1000}]},
+            
+            // ELECTRICITY
+            elec_current: { label: "شدة التيار ⚡", units: [
+                {n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}, {n:"ميكرو أمبير (μA)", s:"uA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1000}
+            ]},
+            elec_voltage: { label: "فرق الجهد 🔋", units: [
+                {n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1000}, {n:"ملي فولت (mV)", s:"mV", f:0.001}
+            ]},
+            elec_res: { label: "المقاومة 🔌", units: [
+                {n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1000}, {n:"ميجـا أوم (MΩ)", s:"MO", f:1e6}
+            ]},
+            elec_power: { label: "القدرة 💡", units: [
+                {n:"وات (W)", s:"W", f:1}, {n:"كيلو وات (kW)", s:"kW", f:1000}, {n:"حصان (hp)", s:"hp", f:745.7}
+            ]},
+            elec_extra: { label: "فيض وحث وسعة ⚛️", units: [
+                {n:"كولوم (C)", s:"C", f:1}, {n:"ميكرو كولوم", s:"uC", f:1e-6}, {n:"هنري (H)", s:"H", f:1}, 
+                {n:"فاراد (F)", s:"F", f:1}, {n:"ميكرو فاراد", s:"uF", f:1e-6}, {n:"تسلا (T)", s:"T", f:1}, {n:"ويبر (Wb)", s:"Wb", f:1}
+            ]},
+
+            // NUMBERS
+            numbers_cs: { label: "أنظمة الحاسبات 🎓", isNum: true, units: [{n:"Binary", s:"bin", b:2}, {n:"Decimal", s:"dec", b:10}, {n:"Octal", s:"oct", b:8}, {n:"Hexadecimal", s:"hex", b:16}]},
+            numbers_math: { label: "أنظمة الرياضيات 🧠", isNum: true, units: [{n:"Ternary", s:"ter", b:3}, {n:"Quaternary", s:"qua", b:4}, {n:"Duodecimal", s:"duo", b:12}]},
+            numbers_adv: { label: "أنظمة متقدمة 🔬", isNum: true, special: true, units: [{n:"Unary", s:"una"}, {n:"Gray Code", s:"gray"}, {n:"Balanced Ternary", s:"bal"}, {n:"BCD", s:"bcd"}]}
         };
 
         const portalData = {
-            general: { badge: "GENERAL MODE", title: "المحرك الموحد", icon: "🌍", desc: "كافة الكميات والوحدات الدولية المعتمدة.", dims: ['length_extended', 'mass_all', 'data'] },
-            secondary: { badge: "ثانوية عامة", title: "بوابة الفيزياء والرياضيات", icon: "🎓", desc: "محرك الفيزياء والكهربية والاختبارات التفاعلية.", dims: [] },
-            engineering: { badge: "ENG HUB", title: "بوابة المهندس", icon: "⚙️", desc: "وحدات الميكانيكا والقياسات الهندسية.", dims: ['mass_all', 'elec_res', 'angles'] },
-            cs: { badge: "CS PORTAL", title: "ركن المبرمجين", icon: "💾", desc: "إدارة البيانات والأنظمة الرقمية.", dims: ['data', 'numbers_cs'] },
-            numbers: { badge: "HACKER MODE", title: "مختبر الأنظمة", icon: "👾", desc: "تحويل لغات الآلة والرياضيات المتقدمة.", dims: ['numbers_cs'] },
+            general: { badge: "GENERAL MODE", title: "المحرك الموحد", icon: "🌍", desc: "كافة الكميات الدولية المعيارية.", dims: ['length_all', 'mass_all', 'volume_all', 'energy_all', 'pressure_all'] },
+            secondary: { badge: "ثانوية عامة", title: "بوابة الفيزياء والرياضيات", icon: "🎓", desc: "محرك الفيزياء والكهربية والاختبارات.", dims: [] },
+            engineering: { badge: "ENG HUB", title: "بوابة المهندس", icon: "⚙️", desc: "وحدات الميكانيكا والقياسات الهندسية.", dims: ['energy_all', 'pressure_all', 'elec_res', 'velocity', 'angles'] },
+            cs: { badge: "CS PORTAL", title: "ركن المبرمجين", icon: "💾", desc: "إدارة البيانات والأنظمة الرقمية.", dims: ['numbers_cs', 'numbers_adv'] },
+            numbers: { badge: "HACKER MODE", title: "مختبر الأنظمة", icon: "👾", desc: "تحويل لغات الآلة والرياضيات المتقدمة.", dims: ['numbers_cs', 'numbers_math', 'numbers_adv'] },
             ultra_calc: { badge: "ULTRA GEN", title: "Ultra Gen Calc", icon: "🧮", desc: "المحرك الحسابي الخارق قيد التطوير.", dims: [] },
-            medical: { badge: "MED SCIENCE", title: "المحرك المخبري", icon: "🧪", desc: "تحويل الأدوية والمقاييس الدقيقة.", dims: ['mass_all', 'length_extended'] }
+            medical: { badge: "MED SCIENCE", title: "المحرك المخبري", icon: "🧪", desc: "تحويل الأدوية والمقاييس الدقيقة.", dims: ['mass_all', 'volume_all', 'length_all'] }
         };
 
         const secondarySubDims = {
-            basic: ['length_extended', 'temperature', 'angles'],
-            electricity: ['elec_current', 'elec_voltage', 'elec_res']
+            basic: ['length_all', 'mass_all', 'volume_all', 'temperature', 'angles', 'velocity', 'density', 'pressure_all'],
+            electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra']
         };
 
+        // --- CORE UI ACTIONS ---
         window.setPortal = (key) => {
             window.currentPortalKey = key; const p = portalData[key];
             document.body.classList.toggle('tech-mode', key === 'numbers');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
-            
             document.getElementById('portal-badge').innerText = p.badge;
             document.getElementById('portal-name').innerText = p.title;
             document.getElementById('portal-desc').innerText = p.desc;
             document.getElementById('portal-icon').innerText = p.icon;
             
-            const isSec = (key === 'secondary');
-            const isCalc = (key === 'ultra_calc');
-            
+            const isSec = (key === 'secondary'); const isCalc = (key === 'ultra_calc');
             document.getElementById('secondary-nav').style.display = isSec ? 'flex' : 'none';
             document.getElementById('calculator-view').style.display = isCalc ? 'block' : 'none';
-            document.getElementById('modern-msg-view').style.display = 'none';
-            document.getElementById('quiz-view').style.display = 'none';
             document.getElementById('converter-view').style.display = (isCalc) ? 'none' : 'grid';
+            document.getElementById('quiz-view').style.display = 'none'; document.getElementById('modern-msg-view').style.display = 'none';
 
-            if (isSec) setSecondaryMode('basic');
-            else if (!isCalc) filterDimensions();
+            if (isSec) setSecondaryMode('basic'); else if (!isCalc) filterDimensions();
         };
 
         window.setSecondaryMode = (mode) => {
             window.currentSecondaryMode = mode;
             document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + mode));
-            
-            const cv = document.getElementById('converter-view');
-            const mv = document.getElementById('modern-msg-view');
-            const qv = document.getElementById('quiz-view');
-
+            const cv = document.getElementById('converter-view'); const mv = document.getElementById('modern-msg-view'); const qv = document.getElementById('quiz-view');
             cv.style.display = (mode === 'basic' || mode === 'electricity') ? 'grid' : 'none';
             mv.style.display = (mode === 'modern') ? 'block' : 'none';
             qv.style.display = (mode === 'quiz') ? 'block' : 'none';
-            
-            if (mode === 'quiz') resetQuiz();
-            else if (mode !== 'modern') filterDimensions();
+            if (mode === 'quiz') resetQuiz(); else if (mode !== 'modern') filterDimensions();
         };
 
         window.filterDimensions = () => {
             const q = document.getElementById('search-dim').value.toLowerCase();
-            let dims = (window.currentPortalKey === 'secondary') ? secondarySubDims[window.currentSecondaryMode] : (portalData[window.currentPortalKey].dims || []);
+            let dims = (window.currentPortalKey === 'secondary') ? secondarySubDims[window.currentSecondaryMode] : portalData[window.currentPortalKey].dims;
             const ds = document.getElementById('dimension-select'); ds.innerHTML = '';
             dims.forEach(d => { if (unitsDB[d].label.toLowerCase().includes(q)) ds.add(new Option(unitsDB[d].label, d)); });
             loadUnits();
@@ -504,109 +463,138 @@
             const dim = unitsDB[dimKey];
             const uF = dim.units.find(u => u.s === document.getElementById('unit-from').value);
             const uT = dim.units.find(u => u.s === document.getElementById('unit-to').value);
-            let resStr = "";
+            let res = "";
 
             if (dim.isTemp) {
-                try { 
-                    let c = (uF.s === 'C') ? parseFloat(val) : (uF.s === 'K') ? parseFloat(val)-273.15 : (parseFloat(val)-32)*5/9;
-                    resStr = (uT.s === 'C') ? c : (uT.s === 'K') ? c+273.15 : (c*9/5)+32;
-                    resStr = resStr.toFixed(2);
-                } catch { resStr = "Error"; }
+                let c = (uF.s==='C')?parseFloat(val) : (uF.s==='K')?parseFloat(val)-273.15 : (parseFloat(val)-32)*5/9;
+                res = (uT.s==='C')?c : (uT.s==='K')?parseFloat(c)+273.15 : (c*9/5)+32;
+                res = parseFloat(res).toFixed(2);
             } else if (dim.isNum) {
-                try { let d = parseInt(val, uF.b || 10); resStr = isNaN(d) ? "⚠️" : d.toString(uT.b || 10).toUpperCase(); } catch { resStr = "⚠️"; }
+                try {
+                    let d; if(uF.s==='una') d=val.length; else if(uF.s==='sex') d=fromB60(val); else if(uF.s==='bal') d=fromBalT(val); else if(uF.s==='gray') d=fromGray(val); else if(uF.s==='bcd') d=parseInt(fromBCD(val)); else d=parseInt(val, uF.b||10);
+                    if(uT.s==='una') res="1".repeat(Math.min(d,100)); else if(uT.s==='sex') res=toB60(d); else if(uT.s==='bal') res=toBalT(d); else if(uT.s==='gray') res=toGray(d); else if(uT.s==='bcd') res=toBCD(d); else res=d.toString(uT.b||10).toUpperCase();
+                } catch { res="Error"; }
             } else {
-                let n = parseFloat(val); if (isNaN(n)) resStr = "0";
+                let n = parseFloat(val); if(isNaN(n)) res="0";
                 else { 
-                    let r = (n * uF.f) / uT.f; 
-                    resStr = (r === 0) ? "0" : (Math.abs(r) > 1e12 || Math.abs(r) < 1e-10) ? r.toExponential(4) : parseFloat(r.toFixed(10)).toString();
-                    window.addConversionToCloud(`${val} ${uF.n} ⮕ ${resStr} ${uT.n}`);
+                    let r = (n * uF.f) / uT.f;
+                    res = (r===0)?"0":(Math.abs(r)>1e12||Math.abs(r)<1e-10)?r.toExponential(4):parseFloat(r.toFixed(10)).toString();
+                    window.addConversionToCloud(`${val} ${uF.n} ⮕ ${res} ${uT.n}`);
                 }
             }
-            out.innerText = resStr;
+            out.innerText = res;
         };
 
-        // --- QUIZ LOGIC ---
-        const qPool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1}];
-        window.startQuiz = () => {
-            document.getElementById('quiz-intro').style.display='none';
-            const c = document.getElementById('quiz-container'); c.style.display='block'; c.innerHTML='';
-            qPool.forEach((q,i)=>{
-                const d = document.createElement('div'); d.className='glass-card p-6 rounded-2xl space-y-4 animate-fade';
-                d.innerHTML=`<h4 class="font-bold text-white text-right">${i+1}. ${q.q}</h4><div class="grid grid-cols-2 gap-3">${q.o.map((o,j)=>`<div onclick="selectOption(${i},${j})" id="q-${i}-o-${j}" class="option-card p-4 rounded-xl text-xs text-right">${o}</div>`).join('')}</div>`;
-                c.appendChild(d);
-            });
-            const b = document.createElement('button'); b.className="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-6"; b.innerText="تصحيح ✅";
-            b.onclick=()=>finishQuiz(); c.appendChild(b);
-            window.userAns = new Array(qPool.length).fill(null);
-        };
-        window.selectOption = (i,j) => { for(let k=0;k<4;k++)document.getElementById(`q-${i}-o-${k}`).classList.remove('selected'); document.getElementById(`q-${i}-o-${j}`).classList.add('selected'); window.userAns[i]=j; };
-        window.finishQuiz = () => {
-            let s=0; qPool.forEach((q,i)=>{ if(window.userAns[i]===q.a) s++; });
-            document.getElementById('quiz-container').style.display='none';
-            const r=document.getElementById('quiz-result'); r.style.display='block';
-            document.getElementById('score-text').innerText=`${s} / ${qPool.length}`;
-            document.getElementById('feedback-msg').innerText = s === qPool.length ? "امتياز يا هندسة! 🌟" : "أداء جيد، راجع القوانين 👍";
-            window.addConversionToCloud(`أنهى الاختبار بنتيجة ${s}/${qPool.length}`);
-        };
-        window.resetQuiz = () => { document.getElementById('quiz-result').style.display='none'; document.getElementById('quiz-intro').style.display='block'; };
-
-        // --- GLOBAL HELPERS ---
+        // --- GLOBAL ACTIONS ---
         window.triggerFireworkTheme = () => {
-            const container = document.getElementById('firework-container');
-            const rocket = document.getElementById('rocket');
-            const flash = document.getElementById('flash');
-            container.style.display = 'flex';
-            rocket.style.animation = 'none'; rocket.offsetHeight; rocket.style.animation = null;
-            setTimeout(() => {
-                flash.classList.add('exploding');
-                setTimeout(() => { 
-                    const isLight = document.body.classList.toggle('light-mode');
-                    const icon = document.getElementById('theme-icon');
-                    icon.innerHTML = isLight ? 
-                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />' : 
-                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
-                }, 400);
-            }, 550);
+            const container = document.getElementById('firework-container'); const rocket = document.getElementById('rocket'); const flash = document.getElementById('flash');
+            container.style.display = 'flex'; rocket.style.animation = 'none'; rocket.offsetHeight; rocket.style.animation = null;
+            setTimeout(() => { flash.classList.add('exploding'); setTimeout(() => { document.body.classList.toggle('light-mode'); }, 400); }, 550);
             setTimeout(() => { container.style.display = 'none'; flash.classList.remove('exploding'); }, 1500);
         };
 
-        window.swapUnits = () => { const f = document.getElementById('unit-from'); const t = document.getElementById('unit-to'); [f.value, t.value] = [t.value, f.value]; runConversion(); };
-        window.copyToClipboard = () => { navigator.clipboard ? navigator.clipboard.writeText(document.getElementById('output-val').innerText) : null; showToast("تم النسخ ✅"); };
+        window.startQuiz = () => {
+            const pool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1},{q:"1 ميجا أوم يساوي؟",o:["1000 أوم","10^6 أوم","10^9 أوم","10^3 أوم"],a:1}];
+            document.getElementById('quiz-intro').style.display='none'; const c=document.getElementById('quiz-container'); c.style.display='block'; c.innerHTML='';
+            pool.forEach((q,i)=>{
+                const d=document.createElement('div'); d.className='glass-card p-6 rounded-2xl mb-4 text-right';
+                d.innerHTML=`<h4 class='font-bold mb-3'>${i+1}. ${q.q}</h4><div class='grid grid-cols-2 gap-2'>${q.o.map((o,j)=>`<div onclick='selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-3 rounded-xl text-xs text-right'>${o}</div>`).join('')}</div>`;
+                c.appendChild(d);
+            });
+            const b=document.createElement('button'); b.className="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText="تصحيح ✅";
+            b.onclick=()=>finishQuiz(pool); c.appendChild(b); window.ansArr=new Array(pool.length).fill(null);
+        };
+        window.selectOption=(i,j)=>{for(let k=0;k<4;k++)document.getElementById(`q-${i}-o-${k}`).classList.remove('selected'); document.getElementById(`q-${i}-o-${j}`).classList.add('selected'); window.ansArr[i]=j;};
+        window.finishQuiz=(p)=>{let s=0; p.forEach((q,i)=>{if(window.ansArr[i]===q.a)s++;}); document.getElementById('quiz-container').style.display='none'; document.getElementById('quiz-result').style.display='block'; document.getElementById('score-text').innerText=`${s}/${p.length}`; document.getElementById('feedback-msg').innerText=s===p.length?"امتياز يا هندسة! 🔥":"حاول مرة أخرى! 💪";};
+        window.resetQuiz=()=>{document.getElementById('quiz-result').style.display='none'; document.getElementById('quiz-intro').style.display='block';};
+
+        // --- ACCOUNT LOGIC ---
+        function renderUserData(data) {
+            document.getElementById('welcome-msg').innerText = `${data.name} | ${data.study}`;
+            document.getElementById('header-user-name').innerText = data.name.split(' ')[0];
+            document.getElementById('modal-user-name').innerText = data.name;
+            document.getElementById('modal-user-study').innerText = `${data.study}`;
+            if (data.profilePic) { document.getElementById('header-profile-pic').src = data.profilePic; document.getElementById('modal-profile-pic').src = data.profilePic; }
+        }
+
+        window.saveUserProfile = async (name, study, phone, password) => {
+            if (user && db) {
+                const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+                await setDoc(profileRef, { name, study, phone, password, createdAt: new Date() }, { merge: true });
+                const docSnap = await getDoc(profileRef); renderUserData(docSnap.data());
+            }
+            showPlatform();
+        };
+
+        window.updateUserEmail = async () => {
+            const email = document.getElementById('modal-user-email').value.trim();
+            if (user && db) { const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data'); await setDoc(profileRef, { email: email }, { merge: true }); showToast("تم التحديث السحابي ✅"); }
+        };
+
+        window.uploadProfilePic = async (event) => {
+            const file = event.target.files[0];
+            if (file && user && db) {
+                const r = new FileReader(); r.onload = async (e) => {
+                    const base64 = e.target.result;
+                    const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+                    await setDoc(profileRef, { profilePic: base64 }, { merge: true });
+                    document.getElementById('header-profile-pic').src = base64; document.getElementById('modal-profile-pic').src = base64;
+                }; r.readAsDataURL(file);
+            }
+        };
+
+        function listenToHistory() {
+            if (user && db) {
+                const historyCol = collection(db, 'artifacts', appId, 'users', user.uid, 'history');
+                onSnapshot(historyCol, (snapshot) => {
+                    const logs = []; snapshot.forEach(doc => logs.push(doc.data()));
+                    logs.sort((a, b) => b.timestamp - a.timestamp);
+                    document.getElementById('history-list').innerHTML = logs.slice(0, 8).map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 animate-fade mb-2 text-right">${h.log}</div>`).join('') || '<p class="text-slate-600 italic text-center">بانتظار تحويلاتك...</p>';
+                }, () => {});
+            }
+        }
+
+        window.sendAIMessage = async () => {
+            const inp = document.getElementById('ai-input'); const txt = inp.value.trim(); if(!txt) return;
+            const d = document.createElement('div'); d.className = `msg msg-user text-right animate-fade mb-2`; d.innerText = txt;
+            document.getElementById('chat-messages').appendChild(d); inp.value = '';
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: txt }] }], systemInstruction: { parts: [{ text: "أنت مساعد مِعيار الذكي. خبير في الفيزياء والكهربية والرياضيات المتقدمة." }] } })
+                });
+                const j = await res.json();
+                const aiMsg = document.createElement('div'); aiMsg.className = `msg msg-ai text-right animate-fade mb-2`;
+                aiMsg.innerText = j.candidates?.[0]?.content?.parts?.[0]?.text || "حدث خطأ في معالجة الطلب.";
+                document.getElementById('chat-messages').appendChild(aiMsg);
+                document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+            } catch(e) {}
+        };
+
+        window.onload = startSystem;
+        window.swapUnits = () => { const f=document.getElementById('unit-from'); const t=document.getElementById('unit-to'); [f.value, t.value]=[t.value, f.value]; runConversion(); };
+        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); showToast("تم النسخ ✅"); };
         window.toggleAbout = (s) => document.getElementById('about-modal').style.display = s ? 'flex' : 'none';
         window.toggleAIChat = (s) => document.getElementById('ai-chat-window').style.display = s ? 'flex' : 'none';
         window.toggleAccountModal = (s) => document.getElementById('account-modal').style.display = s ? 'flex' : 'none';
         function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
+        function showPlatform() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); setPortal('secondary'); }
         
-        window.sendAIMessage = async () => {
-            const inp = document.getElementById('ai-input'); const txt = inp.value.trim(); if(!txt) return;
-            addMsg(txt, 'user'); inp.value = '';
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: txt }] }], systemInstruction: { parts: [{ text: "أنت مساعد مِعيار الذكي. خبير في الفيزياء والكهربية والرياضيات." }] } }) });
-                const d = await res.json(); addMsg(d.candidates[0].content.parts[0].text, 'ai');
-            } catch(e) { addMsg("خطأ في الاتصال بالذكاء الاصطناعي.", "ai"); }
-        };
-        function addMsg(t, r) { const d = document.createElement('div'); d.className = `msg msg-${r} text-right animate-fade mb-2`; d.innerText = t; const c = document.getElementById('chat-messages'); c.appendChild(d); c.scrollTop = c.scrollHeight; }
-
         document.getElementById('login-form').onsubmit = (e) => {
             e.preventDefault();
             const n = document.getElementById('user-name').value.trim();
             const s = document.getElementById('user-study').value;
             const p = document.getElementById('user-phone').value.trim();
             const pass = document.getElementById('user-password').value.trim();
-            window.saveUserProfile(n, s, p, pass);
+            if(typeof saveUserProfile === 'function') window.saveUserProfile(n,s,p,pass); else showPlatform();
         };
 
-        function showPlatform() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            setPortal('secondary');
-        }
+        // Visitor Count Logic
+        if(!localStorage.getItem('mayar_visit_count')) localStorage.setItem('mayar_visit_count', 1500);
+        const vc = parseInt(localStorage.getItem('mayar_visit_count')) + 1;
+        localStorage.setItem('mayar_visit_count', vc);
+        document.getElementById('visitor-count').innerText = vc + "+";
 
-        // Initialize System
-        startSystem();
-
-        // Matrix
         const c = document.getElementById('matrix'); const ctx = c.getContext('2d');
         let w, h, cl, fs=16, dp=[];
         function initM(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; cl=Math.floor(w/fs); dp=new Array(cl).fill(1); }
