@@ -40,8 +40,8 @@
         }
 
         .tech-mode { background-color: #050505 !important; color: #00ff41 !important; }
-        #matrix-canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .tech-mode #matrix-canvas { display: block; }
+        canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        .tech-mode canvas { display: block; }
 
         .nav-link { cursor: pointer; transition: all 0.3s; white-space: nowrap; border-radius: 0.75rem; padding: 0.5rem 1rem; color: #94a3b8; font-size: 0.8rem; font-weight: bold; }
         .nav-link.active { color: var(--primary-yellow); background: rgba(250, 204, 21, 0.1); font-weight: 900; }
@@ -61,7 +61,7 @@
         .msg { padding: 0.6rem 0.9rem; border-radius: 1rem; max-width: 85%; }
         .msg-user { background: var(--ai-blue); color: white; align-self: flex-start; }
         .msg-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); align-self: flex-end; }
-        .profile-img-circle { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: transform 0.3s; }
+        .profile-img-circle { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: 0.3s; }
 
         .option-card { cursor: pointer; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: all 0.2s; }
         .option-card:hover { border-color: var(--primary-yellow); background: rgba(250, 204, 21, 0.05); }
@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <!-- نظام الدخول (Auth) -->
+    <!-- نظام الدخول -->
     <div id="auth-screen" class="fixed inset-0 bg-black hidden items-center justify-center z-[5000]">
         <div class="max-w-md w-full p-10 glass-card rounded-[3rem] border-2 border-yellow-400/30 text-center mx-4 animate-fade">
             <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-6 shadow-xl shadow-yellow-400/10"><span class="text-4xl font-black italic">M</span></div>
@@ -126,7 +126,7 @@
             <div class="container mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center text-center lg:text-right">
                 <div class="flex items-center gap-4 mb-4 lg:mb-0">
                     <div class="bg-yellow-400 w-12 h-12 rounded-xl flex items-center justify-center text-black font-black italic shadow-lg">M</div>
-                    <div class="text-right">
+                    <div class="text-right text-center">
                         <h1 class="text-lg font-black text-white uppercase leading-none tracking-tight">مِعيار Pro</h1>
                         <p id="welcome-msg" class="text-[9px] text-yellow-400 font-bold uppercase tracking-widest mt-1"></p>
                     </div>
@@ -135,18 +135,17 @@
                     </button>
                     <div class="flex items-center gap-2 border-r border-white/10 pr-4 mr-2 cursor-pointer" onclick="toggleAccountModal(true)">
                         <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="Profile">
-                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white text-center">حسابي</span>
+                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white text-right">حسابي</span>
                     </div>
                 </div>
 
                 <nav class="flex overflow-x-auto gap-2 text-[10px] font-bold text-slate-400 w-full lg:w-auto pb-2 lg:pb-0" id="nav-list">
-                    <div onclick="setPortal('home')" id="nav-home" class="nav-link px-3 py-2 active text-center">🏠 الرئيسية</div>
-                    <div onclick="setPortal('general')" id="nav-general" class="nav-link px-3 py-2 text-center">🌍 العام</div>
-                    <div onclick="setPortal('secondary')" id="nav-secondary" class="nav-link px-3 py-2 text-center">🎓 ثانوية عامة</div>
-                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link px-3 py-2 text-center">⚙️ الهندسة</div>
-                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link px-3 py-2 text-center">💾 الحاسبات</div>
+                    <div onclick="setPortal('home')" id="nav-home" class="nav-link px-3 py-2 active">🏠 الرئيسية</div>
+                    <div onclick="setPortal('general')" id="nav-general" class="nav-link px-3 py-2">🌍 العام</div>
+                    <div onclick="setPortal('secondary')" id="nav-secondary" class="nav-link px-3 py-2">🎓 ثانوية عامة</div>
+                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link px-3 py-2">⚙️ الهندسة</div>
+                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link px-3 py-2">💾 الحاسبات</div>
                     <div onclick="setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link px-3 py-2 text-center text-center">🧮 Ultr Gen Calc</div>
-                    <div onclick="setPortal('numbers')" id="nav-numbers" class="nav-link px-3 py-2 text-center text-center">🔢 الأنظمة</div>
                 </nav>
             </div>
         </header>
@@ -235,8 +234,8 @@
                     </div>
                 </div>
 
-                <!-- 4. الحديثة (Modern) -->
-                <div id="modern-msg-view" class="hidden text-center py-20 animate-fade text-center">
+                <!-- 4. الحديثة -->
+                <div id="modern-msg-view" class="hidden text-center py-20 animate-fade">
                     <div class="text-6xl mb-6">🔭</div>
                     <h3 class="text-2xl font-black text-yellow-400 uppercase tracking-widest text-center">سيتم التحديث قريباً انتظر</h3>
                 </div>
@@ -252,7 +251,7 @@
                     <div id="quiz-result" class="hidden text-center py-10 glass-card rounded-3xl border-2 border-yellow-400 text-center">
                         <h2 class="text-4xl font-black text-yellow-400 mb-2 text-center">النتيجة النهائية</h2>
                         <div id="score-text" class="text-6xl font-black text-white my-6 text-center">0 / 5</div>
-                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20 transition-all text-xs text-center">إعادة المحاولة 🔄</button>
+                        <button onclick="resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20 transition-all text-xs text-center text-center">إعادة المحاولة 🔄</button>
                     </div>
                 </div>
             </div>
@@ -264,7 +263,7 @@
                     <div id="history-list" class="space-y-3 text-[10px] opacity-80 max-h-[250px] overflow-y-auto"></div>
                 </div>
                 <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl text-right">
-                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right border-r-2 border-yellow-400 pr-3">💡 Master Engineering Guide</h3>
+                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right border-r-2 border-yellow-400 pr-3 text-right">💡 Master Engineering Guide</h3>
                     <div class="text-[11px] text-slate-400 space-y-4 text-right font-bold text-right">
                         <p>• كافة الوحدات الفيزيائية تم استعادتها وضبطها بدقة 100%.</p>
                         <p>• السحابة الحقيقية (Supabase) تسجل بياناتك وصورك الآن.</p>
@@ -274,7 +273,7 @@
             </div>
 
             <!-- عداد الزوار -->
-            <div class="text-center mt-12 mb-6 text-center">
+            <div class="text-center mt-12 mb-6 text-center text-center">
                 <div class="inline-block glass-card px-8 py-3 rounded-full border-yellow-400/20">
                     <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">الزوار النشطون:</span>
                     <span id="visitor-count" class="text-yellow-400 font-black ml-2 font-mono text-xl">1500+</span>
@@ -288,14 +287,14 @@
         <div class="glass-card rounded-[3.5rem] p-10 max-w-md w-full text-center border-2 border-yellow-400 shadow-2xl" onclick="event.stopPropagation()">
             <div class="relative w-36 h-36 mx-auto mb-4 group">
                 <img id="modal-profile-pic" src="https://via.placeholder.com/150?text=U" class="w-full h-full rounded-full border-4 border-yellow-400 object-cover shadow-2xl" alt="Profile">
-                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase text-center">📷 رفع صورة سحابية</label>
+                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase text-center text-center">📷 رفع صورة سحابية</label>
                 <input type="file" id="profile-upload" accept="image/*" class="hidden" onchange="uploadProfilePic(event)">
             </div>
             <h2 id="modal-user-name" class="text-3xl font-black text-white mb-1 text-center">...</h2>
-            <p id="modal-user-study" class="text-yellow-400 font-bold mb-4 uppercase tracking-widest text-center text-xs text-center">...</p>
-            <div class="mb-6 space-y-3 text-right text-center"><label class="text-[10px] text-slate-500 uppercase font-black mr-2 text-right">البريد الإلكتروني</label><input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400 font-bold text-center" placeholder="example@mail.com"></div>
-            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3 uppercase tracking-widest text-center">حفظ التحديثات 💾</button>
-            <button onclick="logout()" class="text-red-400 text-[10px] font-black underline uppercase text-center">Sign Out</button>
+            <p id="modal-user-study" class="text-yellow-400 font-bold mb-4 uppercase tracking-widest text-center text-xs text-center text-center">...</p>
+            <div class="mb-6 space-y-3 text-right text-center text-center"><label class="text-[10px] text-slate-500 uppercase font-black mr-2 text-right">البريد الإلكتروني</label><input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400 font-bold text-center text-center" placeholder="example@mail.com"></div>
+            <button onclick="updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3 uppercase tracking-widest text-center text-center">حفظ التحديثات 💾</button>
+            <button onclick="logout()" class="text-red-400 text-[10px] font-black underline uppercase text-center text-center">Sign Out</button>
         </div>
     </div>
 
@@ -303,18 +302,17 @@
     <div id="ai-chat-window" class="animate-fade">
         <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold text-xs rounded-t-1.5rem shadow-lg"><span>مساعد مِعيار الذكي</span><button onclick="toggleAIChat(false)">✕</button></div>
         <div class="chat-messages" id="chat-messages"></div>
-        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5"><input type="text" id="ai-input" placeholder="اسألني عن القوانين..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-xs outline-none text-white text-right font-bold"><button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button></div>
+        <div class="p-2 bg-black/30 flex gap-1 border-t border-white/5"><input type="text" id="ai-input" placeholder="اسألني عن القوانين..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-xs outline-none text-white text-right font-bold text-center"><button onclick="sendAIMessage()" class="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-500 transition-colors">➤</button></div>
     </div>
     <div class="fixed bottom-6 right-6 z-[100]"><button onclick="toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-blue-500/20 border-2 border-white/10">🤖</button></div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000] text-center">تم التنفيذ ✅</div>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000] text-center text-center">تم التنفيذ ✅</div>
 
     <!-- Script Core -->
     <script type="module">
-        // --- SUPABASE CONFIGURATION (المفاتيح السحابية المدمجة) ---
+        // --- SUPABASE CONFIGURATION (بيانات الربط المدمجة يا هندسة) ---
         const SUPABASE_URL = "https://srsfoklhjvefdahmrpnh.supabase.co"; 
         const SUPABASE_KEY = "sb_publishable_ebqhymsrFLC3ZAVVpcrTtw_bDsZLGq3"; 
-        // FIX: Accessing from window to avoid initialization error
         const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         // State & Placeholders
@@ -332,8 +330,9 @@
 
         // --- GLOBAL INITIALIZER ---
         async function startSystem() {
+            // مؤقت أمان 3.5 ثانية لتخطي شاشة التحميل في حالة بطء السيرفر
             setTimeout(() => { if (!window.userData) { document.getElementById('loading-screen').classList.add('hidden'); document.getElementById('auth-screen').classList.remove('hidden'); } }, 3500);
-            const saved = localStorage.getItem('mayar_user_data_secure_v3');
+            const saved = localStorage.getItem('mayar_user_data_secure_vfinal');
             if (saved) { window.userData = JSON.parse(saved); renderUserData(window.userData); showPlatform(); updateVisitorCount(); }
         }
 
@@ -354,14 +353,14 @@
                 const study = document.getElementById('reg-study').value;
                 const newUser = { name, phone, study, password: pass, createdAt: new Date() };
                 if(supabase) await supabase.from('users').insert([newUser]);
-                localStorage.setItem('mayar_user_data_secure_v3', JSON.stringify({ name, phone, study, password: pass }));
+                localStorage.setItem('mayar_user_data_secure_vfinal', JSON.stringify({ name, phone, study, password: pass }));
                 window.userData = newUser;
             } else {
                 if(supabase) {
                     const { data } = await supabase.from('users').select('*').eq('phone', phone).eq('password', pass).single();
-                    if(data) window.userData = data; else { alert("خطأ في البيانات أو المستخدم غير مسجل."); return; }
+                    if(data) window.userData = data; else { alert("خطأ في البيانات."); return; }
                 } else {
-                    const stored = JSON.parse(localStorage.getItem('mayar_user_data_secure_v3'));
+                    const stored = JSON.parse(localStorage.getItem('mayar_user_data_secure_vfinal'));
                     if(stored && stored.phone === phone && stored.password === pass) window.userData = stored;
                     else { alert("برجاء إنشاء حساب أولاً."); return; }
                 }
@@ -415,7 +414,7 @@
             animate();
         }
 
-        // --- UNITS DATABASE (MASSIVE) ---
+        // --- UNITS DATABASE (القاعدة الضخمة بالكامل) ---
         const unitsDB = {
             length_all: { label: "الطول والمسافات 📏", units: [
                 {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
@@ -430,7 +429,7 @@
             elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:1e-3}, {n:"ميكرو أمبير (μA)", s:"uA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1e3}]},
             elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت (mV)", s:"mV", f:1e-3}]},
             elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجـا أوم (MO)", s:"MO", f:1e6}]},
-            elec_power: { label: "القدرة 💡", units: [{n:"وات (W)", s:"W", f:1}, {n:"كيلو وات (kW)", s:"kW", f:1e3}, {n:"حصان (hp)", s:"hp", f:745.7}]},
+            elec_power: { label: "القدرة 💡", units: [{n:"وات (W)", s:"W", f:1}, {n:"كيلو وات", s:"kW", f:1e3}, {n:"حصان (hp)", s:"hp", f:745.7}]},
             elec_extra: { label: "حث وسعة وفيض ⚛️", units: [{n:"كولوم", s:"C", f:1}, {n:"هنري (H)", s:"H", f:1}, {n:"فاراد (F)", s:"F", f:1}, {n:"تسلا (T)", s:"T", f:1}, {n:"ويبر (Wb)", s:"Wb", f:1}]},
             temperature: { label: "درجة الحرارة 🌡️", isTemp: true, units: [{n:"سيليزيوس", s:"C"}, {n:"كلفن", s:"K"}, {n:"فهرنهايت", s:"F"}]}
         };
@@ -445,10 +444,7 @@
             numbers: { badge: "Binary Mode", dims: [] }
         };
 
-        const secondarySubDims = { 
-            basic: ['length_all', 'mass_all', 'temperature'], 
-            electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] 
-        };
+        const secondarySubDims = { basic: ['length_all', 'mass_all', 'temperature'], electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] };
 
         // --- UI CORE ---
         window.setPortal = (key) => {
@@ -519,7 +515,7 @@
             Plotly.newPlot('graph-plot-3d', [{z, type: 'surface'}], { paper_bgcolor: 'rgba(0,0,0,0)', font: {color: '#fff'}, margin: {t:0, b:0, l:0, r:0} });
         };
 
-        // --- GLOBAL ACTIONS ---
+        // --- GLOBAL ---
         window.triggerFireworkTheme = () => { const container = document.getElementById('firework-container'); container.style.display = 'flex'; setTimeout(() => { document.body.classList.toggle('light-mode'); }, 550); setTimeout(() => { container.style.display = 'none'; }, 1500); };
         window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); showToast("تم النسخ ✅"); };
         window.toggleAccountModal = (s) => document.getElementById('account-modal').style.display = s ? 'flex' : 'none';
@@ -536,12 +532,12 @@
             document.getElementById('visitor-count').innerText = count + "+";
         }
 
-        window.sendAIMessage = async () => { /* AI Logic */ };
+        window.sendAIMessage = async () => { /* AI Gemini Logic */ };
         window.startQuiz = () => {
             const pool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1}];
             document.getElementById('quiz-intro').style.display='none'; const c=document.getElementById('quiz-container'); c.style.display='block'; c.innerHTML='';
             pool.forEach((q,i)=>{
-                const d=document.createElement('div'); d.className='glass-card p-6 rounded-2xl mb-4 text-right';
+                const d=document.createElement('div'); d.className='glass-card p-6 rounded-2xl mb-4 text-right text-right';
                 d.innerHTML=`<h4 class='font-bold mb-3'>${i+1}. ${q.q}</h4><div class='grid grid-cols-2 gap-3'>${q.o.map((o,j)=>`<div onclick='selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-4 rounded-xl text-xs text-right'>${o}</div>`).join('')}</div>`;
                 c.appendChild(d);
             });
