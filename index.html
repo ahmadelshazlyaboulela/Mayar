@@ -7,13 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&family=Reem+Kufi:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     
-    <!-- المكتبيات الرياضية والـ 3D والسحابة -->
+    <!-- المكتبيات الرياضية والـ 3D -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/all.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -35,17 +33,6 @@
         .regex-font { font-family: 'Montserrat', sans-serif; }
         .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--border-color); }
         
-        body.light-mode .eng-field {
-            border: 2px solid var(--engineering-red) !important;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
-            background-color: white !important;
-            color: black !important;
-        }
-
-        .tech-mode { background-color: #050505 !important; color: #00ff41 !important; }
-        #matrix-canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .tech-mode #matrix-canvas { display: block; }
-
         .nav-link { cursor: pointer; transition: all 0.3s; white-space: nowrap; border-radius: 0.75rem; padding: 0.5rem 1rem; color: #94a3b8; font-size: 0.8rem; font-weight: bold; }
         .nav-link.active { color: var(--primary-yellow); background: rgba(250, 204, 21, 0.1); font-weight: 900; }
         
@@ -59,31 +46,17 @@
         @keyframes explodeFlash { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(500); opacity: 1; } 100% { transform: scale(1000); opacity: 0; } }
         .exploding { animation: explodeFlash 0.8s ease-out forwards; }
 
-        #ai-chat-window { display: none; position: fixed; bottom: 100px; right: 24px; width: 330px; max-height: 450px; background: rgba(15, 15, 15, 0.98); border: 2px solid var(--ai-blue); border-radius: 1.5rem; z-index: 2000; flex-direction: column; box-shadow: 0 0 40px rgba(59, 130, 246, 0.2); }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .msg { padding: 0.6rem 0.9rem; border-radius: 1rem; max-width: 85%; }
-        .msg-user { background: var(--ai-blue); color: white; align-self: flex-start; }
-        .msg-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); align-self: flex-end; }
-        .profile-img-circle { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-yellow); cursor: pointer; transition: transform 0.3s; }
+        #matrix-canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        .tech-mode #matrix-canvas { display: block; }
 
-        .prestige-welcome { font-family: 'Aref Ruqaa', serif; background: linear-gradient(to bottom, #ffffff, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(250, 204, 21, 0.2); line-height: 1.2; }
-        
-        /* Regex Professional Editor Styles */
-        .regex-highlighter { 
-            line-height: 1.625;
-            letter-spacing: normal;
-            word-spacing: normal;
-            font-family: 'Fira Code', monospace;
-            pointer-events: none;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+        .regex-highlighter { line-height: 1.625; font-family: 'Fira Code', monospace; pointer-events: none; white-space: pre-wrap; word-break: break-all; }
         .regex-match { background: rgba(59, 130, 246, 0.3); border-bottom: 2px solid var(--ai-blue); border-radius: 2px; }
-        .regex-match-alt { background: rgba(16, 185, 129, 0.3); border-bottom: 2px solid #10b981; border-radius: 2px; }
-        
         .option-card { cursor: pointer; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: all 0.2s; }
-        .option-card:hover { border-color: var(--primary-yellow); background: rgba(250, 204, 21, 0.05); }
         .option-card.selected { border-color: var(--primary-yellow); background: var(--primary-yellow); color: black; }
+
+        .calc-display { background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 1.5rem; text-align: left; font-size: 2rem; margin-bottom: 1rem; border: 1px solid var(--border-color); }
+        .calc-btn { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 1rem; transition: all 0.2s; font-weight: bold; }
+        .calc-btn:hover { background: rgba(255,255,255,0.15); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -91,29 +64,27 @@
     <div id="firework-container"><div class="rocket" id="rocket"></div><div class="flash-overlay" id="flash"></div></div>
 
     <!-- شاشة التحميل -->
-    <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-[6000]">
+    <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-[6000] transition-opacity duration-700">
         <div class="text-center">
             <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p class="text-yellow-400 text-xs font-black animate-pulse font-mono uppercase tracking-[0.3em]">Ma'yar Master Engine Syncing...</p>
         </div>
     </div>
 
-    <!-- نظام الدخول (Auth) -->
+    <!-- نظام الدخول -->
     <div id="auth-screen" class="fixed inset-0 bg-black hidden items-center justify-center z-[5000]">
-        <div class="max-w-md w-full p-10 glass-card rounded-[3rem] border-2 border-yellow-400/30 text-center mx-4 animate-fade">
-            <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-6 shadow-xl shadow-yellow-400/10"><span class="text-4xl font-black italic">M</span></div>
-            <h1 class="text-3xl font-black mb-1 text-white text-center">مِعيار Pro</h1>
-            <p class="text-yellow-400 font-bold mb-8 uppercase tracking-tighter text-xs text-center">Unified Smart Systems</p>
-            
+        <div class="max-w-md w-full p-10 glass-card rounded-[3rem] border-2 border-yellow-400/30 text-center mx-4">
+            <div class="w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center text-black mx-auto mb-6 shadow-xl"><span class="text-4xl font-black italic">M</span></div>
+            <h1 class="text-3xl font-black mb-1 text-white">مِعيار Pro</h1>
+            <p class="text-yellow-400 font-bold mb-8 uppercase tracking-tighter text-xs">Unified Smart Systems</p>
             <div id="auth-tabs" class="flex gap-2 mb-6 bg-white/5 p-1 rounded-xl">
-                <button onclick="switchAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-lg text-xs font-black transition-all bg-yellow-400 text-black">تسجيل دخول</button>
-                <button onclick="switchAuthTab('signup')" id="tab-signup" class="flex-1 py-2 rounded-lg text-xs font-black transition-all text-white">حساب جديد</button>
+                <button onclick="window.switchAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-lg text-xs font-black transition-all bg-yellow-400 text-black">تسجيل دخول</button>
+                <button onclick="window.switchAuthTab('signup')" id="tab-signup" class="flex-1 py-2 rounded-lg text-xs font-black transition-all text-white">حساب جديد</button>
             </div>
-
-            <form id="auth-form" class="space-y-4 text-right">
+            <form id="auth-form" class="space-y-4">
                 <div id="signup-fields" class="hidden space-y-4">
                     <input type="text" id="reg-name" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold" placeholder="الاسم الكامل">
-                    <select id="reg-study" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 cursor-pointer text-center font-bold">
+                    <select id="reg-study" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold">
                         <option value="هندسة">هندسة</option>
                         <option value="حاسبات">حاسبات</option>
                         <option value="طب">طب</option>
@@ -122,7 +93,7 @@
                 </div>
                 <input type="tel" id="auth-phone" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-mono outline-none focus:border-yellow-400 text-center" placeholder="رقم الهاتف">
                 <input type="password" id="auth-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center" placeholder="كلمة المرور">
-                <button type="submit" id="auth-submit-btn" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg mt-2 uppercase text-xs tracking-widest text-center">Initialize Global System 🧬</button>
+                <button type="submit" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg text-xs tracking-widest">Initialize Global System 🧬</button>
             </form>
         </div>
     </div>
@@ -133,26 +104,24 @@
             <div class="container mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center text-center lg:text-right">
                 <div class="flex items-center gap-4 mb-4 lg:mb-0">
                     <div class="bg-yellow-400 w-12 h-12 rounded-xl flex items-center justify-center text-black font-black italic shadow-lg">M</div>
-                    <div class="text-right text-center">
+                    <div class="text-right">
                         <h1 class="text-lg font-black text-white uppercase leading-none tracking-tight">مِعيار Pro</h1>
                         <p id="welcome-msg" class="text-[9px] text-yellow-400 font-bold uppercase tracking-widest mt-1"></p>
                     </div>
-                    <button onclick="triggerFireworkTheme()" class="p-2 bg-yellow-400/10 rounded-full text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all mx-2">
-                        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                    </button>
+                    <button onclick="window.triggerFireworkTheme()" class="p-2 bg-yellow-400/10 rounded-full text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all mx-2">🌓</button>
                     <div class="flex items-center gap-2 border-r border-white/10 pr-4 mr-2 cursor-pointer" onclick="window.toggleAccountModal(true)">
-                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="profile-img-circle shadow-lg" alt="Profile">
-                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white text-right text-center">حسابي</span>
+                        <img id="header-profile-pic" src="https://via.placeholder.com/150?text=U" class="w-10 h-10 rounded-full border-2 border-yellow-400 object-cover shadow-lg" alt="Profile">
+                        <span id="header-user-name" class="text-xs font-bold hidden md:block text-white">حسابي</span>
                     </div>
                 </div>
 
                 <nav class="flex overflow-x-auto gap-2 text-[10px] font-bold text-slate-400 w-full lg:w-auto pb-2 lg:pb-0" id="nav-list">
-                    <div onclick="window.setPortal('home')" id="nav-home" class="nav-link px-3 py-2 active text-center">🏠 الرئيسية</div>
-                    <div onclick="window.setPortal('general')" id="nav-general" class="nav-link px-3 py-2 text-center">🌍 العام</div>
-                    <div onclick="window.setPortal('secondary')" id="nav-secondary" class="nav-link px-3 py-2 text-center">🎓 ثانوية عامة</div>
-                    <div onclick="window.setPortal('engineering')" id="nav-engineering" class="nav-link px-3 py-2 text-center">⚙️ الهندسة</div>
-                    <div onclick="window.setPortal('cs')" id="nav-cs" class="nav-link px-3 py-2 text-center text-center">💾 الحاسبات</div>
-                    <div onclick="window.setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link px-3 py-2 text-center text-center text-center">🧮 Ultr Gen Calc</div>
+                    <div onclick="window.setPortal('home')" id="nav-home" class="nav-link active">🏠 الرئيسية</div>
+                    <div onclick="window.setPortal('general')" id="nav-general" class="nav-link">🌍 العام</div>
+                    <div onclick="window.setPortal('secondary')" id="nav-secondary" class="nav-link">🎓 ثانوية عامة</div>
+                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link">⚙️ الهندسة</div>
+                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link text-center">💾 الحاسبات</div>
+                    <div onclick="setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link text-center">🧮 Ultr Gen Calc</div>
                 </nav>
             </div>
         </header>
@@ -162,16 +131,12 @@
             <div id="secondary-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2 animate-fade">
                 <button onclick="window.setSecondaryMode('basic')" id="s-basic" class="sub-nav-btn active">الوحدات الأساسية</button>
                 <button onclick="window.setSecondaryMode('electricity')" id="s-elec" class="sub-nav-btn">الكهربية التياريه</button>
-                <button onclick="window.setSecondaryMode('modern')" id="s-modern" class="sub-nav-btn">الفيزياء الحديثه</button>
                 <button onclick="window.setSecondaryMode('quiz')" id="s-quiz" class="sub-nav-btn border-yellow-400/20 text-yellow-400">📝 اختبرني</button>
             </div>
 
             <div id="cs-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2 animate-fade">
                 <button onclick="window.setCSMode('units')" id="cs-units" class="sub-nav-btn active">وحدات التخزين</button>
-                <button onclick="window.setCSMode('regex')" id="cs-regex" class="sub-nav-btn border-blue-400/20 text-blue-400 flex items-center gap-2">
-                    <span class="regex-font font-black uppercase text-[12px] tracking-tighter">Regex Hub</span>
-                    <span class="text-xs">🤖</span>
-                </button>
+                <button onclick="window.setCSMode('regex')" id="cs-regex" class="sub-nav-btn border-blue-400/20 text-blue-400">🤖 Regex Hub</button>
             </div>
 
             <!-- اللوحة الرئيسية -->
@@ -180,12 +145,12 @@
                 <!-- الرئيسية -->
                 <div id="home-view" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-right animate-fade">
                     <div class="order-1">
-                        <h1 class="text-6xl md:text-8xl font-black mb-10 prestige-welcome leading-tight text-center lg:text-right">أهلاً بك في مِعيار Pro</h1>
-                        <div class="space-y-8 text-slate-300 text-right">
-                            <div class="border-r-4 border-yellow-400 pr-6 py-2 text-right">
-                                <h3 class="text-2xl font-black text-white kufi-font mb-2 text-right">رؤية المهندس أحمد الشاذلي</h3>
-                                <p class="text-lg leading-relaxed opacity-90 text-right leading-relaxed">
-                                    أهلاً بيك يا صاحبي في منصة مِعيار المنصه الأولى مصرياً وعربياً في الشموليه الجامعه والرابطه ما بين ما ستراه بعينك دون أن تقرأه. ابدأ رحلتك الآن عبر اختيار مسارك من شريط التنقل.
+                        <h1 class="text-6xl md:text-8xl font-black mb-10 ruqaa-font text-yellow-400 leading-tight">أهلاً بك في مِعيار</h1>
+                        <div class="space-y-8 text-slate-300">
+                            <div class="border-r-4 border-yellow-400 pr-6 py-2">
+                                <h3 class="text-2xl font-black text-white kufi-font mb-2">رؤية المهندس أحمد الشاذلي</h3>
+                                <p class="text-lg leading-relaxed opacity-90">
+                                    أهلاً بيك يا صاحبي في منصة مِعيار المنصه الأولى مصرياً وعربياً في الشموليه الجامعه والرابطه ما بين ما ستراه بعينك دون أن تقرأه. ابدأ رحلتك الآن عبر اختيار مسارك.
                                 </p>
                             </div>
                             <div class="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
@@ -196,7 +161,6 @@
                     </div>
                     <div class="order-2 flex justify-center h-full">
                         <div id="three-container" class="w-full relative min-h-[400px]">
-                            <div class="absolute inset-0 bg-yellow-400/10 blur-[120px] rounded-full -z-10 animate-pulse"></div>
                             <canvas id="three-d-canvas" class="w-full h-full"></canvas>
                         </div>
                     </div>
@@ -205,137 +169,73 @@
                 <!-- المحول -->
                 <div id="converter-view" class="hidden grid grid-cols-1 lg:grid-cols-11 gap-12 items-center text-center">
                     <div class="lg:col-span-5 space-y-6 text-right">
-                        <input type="text" id="search-dim" placeholder="🔍 ابحث عن فئة القياس..." oninput="window.filterDimensions()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-right text-sm outline-none focus:border-yellow-400 font-bold text-white">
-                        <select id="dimension-select" onchange="window.loadUnits()" class="eng-field w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer font-bold"></select>
-                        <select id="unit-from" onchange="window.runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold"></select>
-                        <input type="text" id="input-value" value="1" oninput="window.runConversion()" class="eng-field w-full p-6 text-4xl font-black rounded-3xl bg-black/50 border-2 border-yellow-400/20 text-yellow-400 text-center outline-none font-mono">
+                        <select id="dimension-select" onchange="window.loadUnits()" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer font-bold"></select>
+                        <select id="unit-from" onchange="window.runConversion()" class="w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold"></select>
+                        <input type="number" id="input-value" value="1" oninput="window.runConversion()" class="w-full p-6 text-4xl font-black rounded-3xl bg-black/50 border-2 border-yellow-400/20 text-yellow-400 text-center outline-none font-mono">
                     </div>
                     <div class="lg:col-span-1 flex justify-center"><button onclick="window.swapUnits()" class="w-14 h-14 rounded-full bg-yellow-400 text-black shadow-xl hover:scale-110 transition-transform flex items-center justify-center font-bold text-2xl">⇄</button></div>
-                    <div class="lg:col-span-5 space-y-6 text-right text-center">
-                        <div class="h-[128px] hidden lg:block text-center"></div>
-                        <select id="unit-to" onchange="window.runConversion()" class="eng-field w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold text-center"></select>
+                    <div class="lg:col-span-5 space-y-6 text-right">
+                        <select id="unit-to" onchange="window.runConversion()" class="w-full p-4 rounded-xl bg-white/10 border border-white/10 text-white outline-none font-bold text-center"></select>
                         <div id="result-box" class="w-full p-8 min-h-[140px] flex flex-col items-center justify-center rounded-[2.5rem] bg-yellow-400 text-black shadow-inner relative group text-center">
-                            <span id="output-val" class="text-4xl font-black break-all font-mono text-center">0</span>
-                            <button onclick="window.copyToClipboard()" class="absolute top-4 left-4 p-2 bg-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity text-center">📋</button>
+                            <span id="output-val" class="text-4xl font-black break-all font-mono">0</span>
+                            <button onclick="window.copyToClipboard()" class="absolute top-4 left-4 p-2 bg-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Regex Hub المتكامل -->
-                <div id="regex-view" class="hidden flex flex-col lg:flex-row gap-6 h-[650px] text-left overflow-hidden animate-fade" dir="ltr">
-                    <aside class="w-full lg:w-1/5 glass-card p-4 rounded-3xl space-y-6 overflow-y-auto border-white/5 bg-black/20 text-left">
-                        <div>
-                            <h3 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4 text-left">FLAVOR</h3>
-                            <div class="space-y-1 text-left">
-                                <div class="text-xs p-2.5 rounded bg-blue-600/20 border border-blue-500/30 text-blue-300 font-bold flex items-center gap-2"><i data-lucide="code" class="w-3.5 h-3.5"></i> ECMAScript (JS)</div>
-                                <div class="text-xs p-2.5 rounded text-slate-500 opacity-40 flex items-center gap-2 cursor-not-allowed"><i data-lucide="code" class="w-3.5 h-3.5"></i> PCRE2 (PHP)</div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 text-left">FUNCTION</h3>
-                            <div class="space-y-1 text-left">
-                                <div class="text-xs p-2.5 rounded bg-white/5 border border-white/10 text-white font-bold flex items-center gap-2 text-left"><i data-lucide="list" class="w-3.5 h-3.5"></i> Match</div>
-                                <div class="text-xs p-2.5 rounded text-slate-500 opacity-40 flex items-center gap-2 cursor-not-allowed text-left"><i data-lucide="replace" class="w-3.5 h-3.5"></i> Substitution</div>
-                            </div>
-                        </div>
-                        <div class="mt-auto pt-4 border-t border-white/5 text-left">
-                            <div class="bg-blue-600/10 p-3 rounded-xl border border-blue-500/20 text-[10px] text-blue-300 leading-relaxed text-left">
-                                <b>PRO TIP:</b> Use <code class="bg-black/50 px-1 rounded">\b</code> for word boundaries to avoid partial matches.
-                            </div>
-                        </div>
-                    </aside>
-                    
-                    <main class="flex-1 flex flex-col gap-5 min-h-0 text-left">
-                        <div class="space-y-2 text-left">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase flex justify-between text-left">
-                                Regular Expression 
-                                <span id="regex-error-tag" class="hidden text-red-400 px-2 rounded bg-red-400/10 font-mono text-[9px] animate-pulse">Pattern Error</span>
-                            </label>
-                            <div class="flex items-center bg-black/60 border border-white/10 rounded-2xl px-5 py-5 focus-within:border-blue-500 transition-all shadow-inner text-left">
-                                <span class="text-slate-500 font-mono text-2xl mr-2">/</span>
-                                <input type="text" id="regex-pattern-input" value="([a-z0-9]+)@([a-z]+\.[a-z]{2,})" class="flex-1 bg-transparent border-none outline-none font-mono text-[#4a9eff] text-xl text-left" spellcheck="false">
-                                <span class="text-slate-500 font-mono text-2xl ml-2">/</span>
-                                <span id="regex-flags-input" class="text-emerald-400 font-mono text-xl ml-3 cursor-pointer hover:bg-emerald-400/10 px-1 rounded transition-colors text-left" title="Flags">gm</span>
-                            </div>
-                        </div>
-
-                        <div class="flex-1 flex flex-col min-h-0 relative text-left">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 text-left">Test String</label>
-                            <div class="relative flex-1 bg-black/40 rounded-2xl border border-white/5 overflow-hidden shadow-2xl text-left">
-                                <div id="regex-backdrop-layer" class="absolute inset-0 p-5 font-mono text-lg leading-relaxed whitespace-pre-wrap break-words regex-highlighter overflow-y-auto pointer-events-none text-transparent text-left"></div>
-                                <textarea id="regex-test-area" class="absolute inset-0 w-full h-full p-5 bg-transparent border-none outline-none resize-none text-[#ccc] font-mono text-lg leading-relaxed whitespace-pre-wrap break-words caret-blue-500 text-left" placeholder="Insert your test text here..." spellcheck="false"></textarea>
-                            </div>
-                        </div>
-                    </main>
-
-                    <aside class="w-full lg:w-1/4 glass-card p-5 rounded-3xl overflow-y-auto border-white/5 bg-black/20 text-left">
-                        <section class="mb-8 text-left">
-                            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 text-left"><i data-lucide="info" class="w-3 h-3 text-left"></i> EXPLANATION</h3>
-                            <div id="regex-explanation-area" class="text-[11px] text-slate-300 leading-relaxed space-y-3 text-left"></div>
-                        </section>
-                        <section class="text-left">
-                            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-4 flex items-center gap-2 text-left"><i data-lucide="flag" class="w-3 h-3 text-left"></i> MATCH INFORMATION</h3>
-                            <div id="regex-match-list" class="space-y-3 text-left"></div>
-                        </section>
-                    </aside>
+                <!-- Regex Hub -->
+                <div id="regex-view" class="hidden flex flex-col gap-6 h-[500px] text-left" dir="ltr">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Regular Expression</label>
+                        <input type="text" id="regex-pattern-input" value="([a-z0-9]+)@([a-z]+\.[a-z]{2,})" class="p-4 bg-black/60 border border-white/10 rounded-xl font-mono text-blue-400 outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex-1 relative bg-black/40 rounded-xl border border-white/5 overflow-hidden shadow-2xl">
+                        <div id="regex-backdrop-layer" class="absolute inset-0 p-5 font-mono text-lg leading-relaxed whitespace-pre-wrap regex-highlighter text-transparent"></div>
+                        <textarea id="regex-test-area" class="absolute inset-0 w-full h-full p-5 bg-transparent border-none outline-none resize-none text-[#ccc] font-mono text-lg leading-relaxed" placeholder="Insert your test text here..."></textarea>
+                    </div>
                 </div>
 
                 <!-- الآلة الحاسبة -->
                 <div id="ultra-calc-view" class="hidden space-y-8 animate-fade text-right">
-                    <nav class="flex gap-2 overflow-x-auto pb-4 border-b border-white/5">
-                        <button onclick="window.setCalcMode('basic')" id="cm-basic" class="calc-tab-btn px-4 py-2 text-xs font-bold text-yellow-400 border-b-2 border-yellow-400">Calculator</button>
-                        <button onclick="window.setCalcMode('algebra')" id="cm-algebra" class="calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400">Algebra</button>
-                        <button onclick="window.setCalcMode('graph')" id="cm-graph" class="calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400">3D Graph</button>
-                    </nav>
-                    <div id="calc-pane-basic" class="calc-pane space-y-6">
-                        <div class="calc-display text-yellow-400 font-mono" id="calc-screen">0</div>
-                        <div class="grid grid-cols-4 md:grid-cols-5 gap-3 text-center">
-                            <button onclick="window.calcIn('sin(')" class="calc-btn">sin</button><button onclick="window.calcIn('cos(')" class="calc-btn">cos</button><button onclick="window.calcIn('tan(')" class="calc-btn">tan</button><button onclick="window.calcAC()" class="calc-btn text-red-400 font-bold">AC</button><button onclick="window.calcDel()" class="calc-btn font-bold">⌫</button>
-                            <button onclick="window.calcIn('7')" class="calc-btn">7</button><button onclick="window.calcIn('8')" class="calc-btn">8</button><button onclick="window.calcIn('9')" class="calc-btn">9</button><button onclick="window.calcIn('/')" class="calc-btn">÷</button><button onclick="window.calcIn('log(')" class="calc-btn">log</button>
-                            <button onclick="window.calcIn('4')" class="calc-btn">4</button><button onclick="window.calcIn('5')" class="calc-btn">5</button><button onclick="window.calcIn('6')" class="calc-btn">6</button><button onclick="window.calcIn('*')" class="calc-btn">×</button><button onclick="window.calcIn('sqrt(')" class="calc-btn">√</button>
-                            <button onclick="window.calcIn('1')" class="calc-btn">1</button><button onclick="window.calcIn('2')" class="calc-btn">2</button><button onclick="window.calcIn('3')" class="calc-btn">3</button><button onclick="window.calcIn('-')" class="calc-btn">-</button><button onclick="window.calcIn('^')" class="calc-btn">xʸ</button>
-                            <button onclick="window.calcIn('0')" class="calc-btn">0</button><button onclick="window.calcIn('.')" class="calc-btn">.</button><button onclick="window.calcRes()" class="calc-btn bg-yellow-400 text-black font-bold">=</button><button onclick="window.calcIn('+')" class="calc-btn">+</button><button onclick="window.calcIn('pi')" class="calc-btn">π</button>
-                        </div>
+                    <div class="calc-display text-yellow-400 font-mono" id="calc-screen">0</div>
+                    <div class="grid grid-cols-4 md:grid-cols-5 gap-3">
+                        <button onclick="window.calcIn('sin(')" class="calc-btn">sin</button><button onclick="window.calcIn('cos(')" class="calc-btn">cos</button><button onclick="window.calcIn('tan(')" class="calc-btn">tan</button><button onclick="window.calcAC()" class="calc-btn text-red-400 font-bold">AC</button><button onclick="window.calcDel()" class="calc-btn font-bold">⌫</button>
+                        <button onclick="window.calcIn('7')" class="calc-btn">7</button><button onclick="window.calcIn('8')" class="calc-btn">8</button><button onclick="window.calcIn('9')" class="calc-btn">9</button><button onclick="window.calcIn('/')" class="calc-btn">÷</button><button onclick="window.calcIn('log(')" class="calc-btn">log</button>
+                        <button onclick="window.calcIn('4')" class="calc-btn">4</button><button onclick="window.calcIn('5')" class="calc-btn">5</button><button onclick="window.calcIn('6')" class="calc-btn">6</button><button onclick="window.calcIn('*')" class="calc-btn">×</button><button onclick="window.calcIn('sqrt(')" class="calc-btn">√</button>
+                        <button onclick="window.calcIn('1')" class="calc-btn">1</button><button onclick="window.calcIn('2')" class="calc-btn">2</button><button onclick="window.calcIn('3')" class="calc-btn">3</button><button onclick="window.calcIn('-')" class="calc-btn">-</button><button onclick="window.calcIn('^')" class="calc-btn">xʸ</button>
+                        <button onclick="window.calcIn('0')" class="calc-btn">0</button><button onclick="window.calcIn('.')" class="calc-btn">.</button><button onclick="window.calcRes()" class="calc-btn bg-yellow-400 text-black font-bold">=</button><button onclick="window.calcIn('+')" class="calc-btn">+</button><button onclick="window.calcIn('pi')" class="calc-btn">π</button>
                     </div>
                 </div>
 
-                <!-- الاختبار -->
-                <div id="quiz-view" class="hidden text-right animate-fade text-right">
-                    <div id="quiz-intro" class="text-center py-10">
-                        <div class="text-6xl mb-6 text-center">📝</div>
-                        <h3 class="text-2xl font-black text-white text-center font-bold text-center">مختبر الفيزياء والتحويلات</h3>
-                        <button onclick="window.startQuiz()" class="mt-8 bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform text-center">ابدأ الاختبار 🚀</button>
+                <!-- شاشة الاختبار -->
+                <div id="quiz-view" class="hidden text-center space-y-8 animate-fade">
+                    <div id="quiz-intro" class="py-10">
+                        <div class="text-6xl mb-6">📝</div>
+                        <h3 class="text-3xl font-black text-white ruqaa-font">مختبر الفيزياء والتحويلات</h3>
+                        <button onclick="window.startQuiz()" class="mt-8 bg-yellow-400 text-black font-black px-12 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform">ابدأ الاختبار 🚀</button>
                     </div>
-                    <div id="quiz-container" class="hidden space-y-8"></div>
-                    <div id="quiz-result" class="hidden text-center py-10 glass-card rounded-3xl border-2 border-yellow-400 text-center">
-                        <h2 class="text-4xl font-black text-yellow-400 mb-2 text-center text-center">النتيجة النهائية</h2>
-                        <div id="score-text" class="text-6xl font-black text-white my-6 text-center text-center">0 / 5</div>
-                        <button onclick="window.resetQuiz()" class="mt-8 bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20 transition-all text-xs text-center text-center">إعادة المحاولة 🔄</button>
+                    <div id="quiz-container" class="hidden space-y-4 text-right"></div>
+                    <div id="quiz-result" class="hidden p-10 glass-card rounded-3xl border-2 border-yellow-400">
+                        <h2 class="text-4xl font-black text-yellow-400 mb-2">النتيجة النهائية</h2>
+                        <div id="score-text" class="text-6xl font-black text-white my-6">0 / 0</div>
+                        <button onclick="window.resetQuiz()" class="bg-white/10 text-white px-8 py-3 rounded-xl hover:bg-white/20">إعادة المحاولة 🔄</button>
                     </div>
                 </div>
             </div>
 
             <!-- الفوتر والسجل -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right text-right">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right">
                 <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl text-right">
-                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end text-sm text-right"><span>🕒</span> السجل السحابي الحي</h3>
-                    <div id="history-list" class="space-y-3 text-[10px] opacity-80 max-h-[250px] overflow-y-auto text-right"></div>
+                    <h3 class="font-bold text-yellow-400 mb-6 flex items-center gap-3 justify-end"><span>🕒</span> السجل المحلي النشط</h3>
+                    <div id="history-list" class="space-y-3 text-[10px] opacity-80 max-h-[250px] overflow-y-auto"></div>
                 </div>
-                <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl text-right text-right">
-                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase text-right border-r-2 border-yellow-400 pr-3 text-right">💡 Master Engineering Guide</h3>
-                    <div class="text-[11px] text-slate-400 space-y-4 text-right font-bold text-right text-right">
+                <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 shadow-xl text-right">
+                    <h3 class="font-bold text-yellow-400 mb-6 text-sm uppercase border-r-2 border-yellow-400 pr-3">💡 Master Engineering Guide</h3>
+                    <div class="text-[11px] text-slate-400 space-y-4 font-bold">
                         <p>• كافة الوحدات الفيزيائية والبرمجية تم ضبطها بدقة 100%.</p>
-                        <p>• سحابة Supabase متصلة الآن لتخزين بياناتك وصورك.</p>
-                        <p>• مختبر Regex متكامل تماماً متاح الآن لمطوري الأنظمة.</p>
+                        <p>• النظام يعمل محلياً بالكامل لضمان الخصوصية والسرعة.</p>
+                        <p>• تم تفعيل نظام التخزين المحلي التلقائي لبياناتك.</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- عداد الزوار -->
-            <div class="text-center mt-12 mb-6 text-center text-center">
-                <div class="inline-block glass-card px-8 py-3 rounded-full border-yellow-400/20 text-center">
-                    <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black text-center">الزوار النشطون:</span>
-                    <span id="visitor-count" class="text-yellow-400 font-black ml-2 font-mono text-xl text-center">1500+</span>
                 </div>
             </div>
         </main>
@@ -344,186 +244,24 @@
     <!-- Modals -->
     <div id="account-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden items-center justify-center p-6 z-[7000]" onclick="window.toggleAccountModal(false)">
         <div class="glass-card rounded-[3.5rem] p-10 max-w-md w-full text-center border-2 border-yellow-400 shadow-2xl" onclick="event.stopPropagation()">
-            <div class="relative w-36 h-36 mx-auto mb-4 group text-center">
-                <img id="modal-profile-pic" src="https://via.placeholder.com/150?text=U" class="w-full h-full rounded-full border-4 border-yellow-400 object-cover shadow-2xl text-center" alt="Profile">
-                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase text-center text-center text-center">📷 رفع صورة سحابية</label>
+            <div class="relative w-36 h-36 mx-auto mb-4">
+                <img id="modal-profile-pic" src="https://via.placeholder.com/150?text=U" class="w-full h-full rounded-full border-4 border-yellow-400 object-cover shadow-2xl">
+                <label for="profile-upload" class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer text-white text-[10px] font-black uppercase">📷 رفع صورة</label>
                 <input type="file" id="profile-upload" accept="image/*" class="hidden" onchange="window.uploadProfilePic(event)">
             </div>
-            <h2 id="modal-user-name" class="text-3xl font-black text-white mb-1 text-center text-center">...</h2>
-            <p id="modal-user-study" class="text-yellow-400 font-bold mb-4 uppercase tracking-widest text-center text-xs text-center text-center text-center">...</p>
-            <div class="mb-6 space-y-3 text-right text-center text-center text-center text-center"><label class="text-[10px] text-slate-500 uppercase font-black mr-2 text-right">البريد الإلكتروني</label><input type="email" id="modal-user-email" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-center text-white text-xs outline-none focus:border-yellow-400 font-bold text-center text-center text-center text-center" placeholder="example@mail.com"></div>
-            <button onclick="window.updateUserEmail()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl text-xs mb-3 uppercase tracking-widest text-center text-center text-center">حفظ التحديثات 💾</button>
-            <button onclick="window.logout()" class="text-red-400 text-[10px] font-black underline uppercase text-center text-center text-center">Sign Out</button>
+            <h2 id="modal-user-name" class="text-3xl font-black text-white mb-1">...</h2>
+            <p id="modal-user-study" class="text-yellow-400 font-bold mb-8 uppercase tracking-widest text-xs">...</p>
+            <button onclick="window.logout()" class="text-red-400 text-[10px] font-black underline uppercase">تسجيل الخروج</button>
         </div>
     </div>
 
-    <!-- About Owner Modal (i) -->
-    <div id="about-owner-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden items-center justify-center p-6 z-[8000]" onclick="window.toggleAboutOwner(false)">
-        <div class="glass-card rounded-[3rem] p-10 max-w-sm w-full text-center border-2 border-yellow-400 shadow-2xl animate-fade text-center" onclick="event.stopPropagation()">
-            <div class="w-32 h-32 rounded-full border-4 border-yellow-400 mx-auto mb-6 overflow-hidden shadow-xl text-center">
-                <img src="ahmad.jpg" alt="أحمد الشاذلى" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200?text=Ahmad'">
-            </div>
-            <h2 class="text-4xl font-bold text-yellow-400 kufi-font mb-2 text-center">أحمد الشاذلى</h2>
-            <p class="text-sm text-slate-300 uppercase tracking-widest text-center text-center text-center">مؤسس ومالك منصة مِعيار Pro</p>
-            <div class="h-px bg-white/10 w-1/2 mx-auto my-4 text-center"></div>
-            <p class="text-xs text-slate-400 leading-relaxed text-center font-bold text-center text-center">طالب بكلية الحاسبات والذكاء الاصطناعي - مطور نظم برمجية وهندسية.</p>
-            <button onclick="window.toggleAboutOwner(false)" class="mt-8 text-xs text-yellow-400 font-black hover:underline uppercase text-center text-center">إغلاق النافذة</button>
-        </div>
-    </div>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000]">تم التنفيذ ✅</div>
 
-    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-4">
-        <button onclick="window.toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-blue-500/20 border-2 border-white/10">🤖</button>
-        <button onclick="window.toggleAboutOwner(true)" class="w-14 h-14 bg-white/10 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform border-2 border-white/20">ℹ️</button>
-    </div>
-
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000] text-center text-center text-center">تم التنفيذ ✅</div>
-
-    <!-- Script Core -->
-    <script type="module">
-        // --- SUPABASE CONFIGURATION ---
-        const SUPABASE_URL = "https://srsfoklhjvefdahmrpnh.supabase.co"; 
-        const SUPABASE_KEY = "sb_publishable_ebqhymsrFLC3ZAVVpcrTtw_bDsZLGq3"; 
-        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-        // --- GLOBAL UI FUNCTIONS ---
-        window.showPlatform = () => { 
-            document.getElementById('auth-screen').classList.add('hidden'); 
-            document.getElementById('main-app').classList.remove('hidden'); 
-            window.setPortal('home'); 
-            if(window.lucide) window.lucide.createIcons();
-        };
-
-        window.toggleAboutOwner = (s) => { 
-            const modal = document.getElementById('about-owner-modal');
-            if(!modal) return;
-            if(s) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
-            else { modal.classList.add('hidden'); modal.classList.remove('flex'); }
-        };
-
-        window.toggleAIChat = (s) => {
-            const chat = document.getElementById('ai-chat-window');
-            if(chat) chat.style.display = s ? 'flex' : 'none';
-        };
-
-        window.toggleAccountModal = (s) => {
-            const modal = document.getElementById('account-modal');
-            if(modal) modal.style.display = s ? 'flex' : 'none';
-        };
-
-        window.logout = () => { localStorage.clear(); window.location.reload(); };
-
-        // State
+    <script>
+        // --- GLOBAL STATE ---
         window.userData = null;
+        window.historyData = [];
         window.currentAuthMode = 'login';
-        window.addConversionToCloud = async (log) => { if(supabase && window.userData) await supabase.from('history').insert([{ log, phone: window.userData.phone, timestamp: new Date() }]); };
-        window.updateUserEmail = async () => { const email = document.getElementById('modal-user-email').value.trim(); if(supabase && window.userData) { await supabase.from('users').update({ email }).eq('phone', window.userData.phone); showToast("تم التحديث ✅"); } };
-        window.listenToHistory = () => { if(supabase && window.userData) { loadHistory(); } };
-
-        async function loadHistory() {
-            if(!supabase || !window.userData) return;
-            const { data } = await supabase.from('history').select('*').eq('phone', window.userData.phone).order('timestamp', { ascending: false }).limit(8);
-            if(data) {
-                const list = document.getElementById('history-list');
-                if(list) list.innerHTML = data.map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 animate-fade mb-2 text-right text-white font-mono font-bold">${h.log}</div>`).join('') || '<p class="text-slate-600 italic text-center">بانتظار تحويلاتك...</p>';
-            }
-        }
-
-        // --- GLOBAL INITIALIZER ---
-        async function startSystem() {
-            setTimeout(() => { if (!window.userData) { 
-                const loading = document.getElementById('loading-screen');
-                const auth = document.getElementById('auth-screen');
-                if(loading) loading.classList.add('hidden'); 
-                if(auth) auth.classList.remove('hidden'); 
-            } }, 3500);
-            const saved = localStorage.getItem('mayar_user_data_secure_vfinal_fix_v4');
-            if (saved) { window.userData = JSON.parse(saved); renderUserData(window.userData); window.showPlatform(); updateVisitorCount(); }
-        }
-
-        // --- AUTH ---
-        window.switchAuthTab = (mode) => {
-            const loginBtn = document.getElementById('tab-login');
-            const signupBtn = document.getElementById('tab-signup');
-            const signupFields = document.getElementById('signup-fields');
-            if(loginBtn) loginBtn.className = mode === 'login' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
-            if(signupBtn) signupBtn.className = mode === 'signup' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
-            if(signupFields) signupFields.classList.toggle('hidden', mode === 'login');
-            window.currentAuthMode = mode;
-        };
-
-        document.getElementById('auth-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const phone = document.getElementById('auth-phone').value.trim();
-            const pass = document.getElementById('auth-password').value.trim();
-            if (window.currentAuthMode === 'signup') {
-                const name = document.getElementById('reg-name').value.trim();
-                const study = document.getElementById('reg-study').value;
-                const newUser = { name, phone, study, password: pass, createdAt: new Date() };
-                if(supabase) await supabase.from('users').insert([newUser]);
-                localStorage.setItem('mayar_user_data_secure_vfinal_fix_v4', JSON.stringify({ name, phone, study, password: pass }));
-                window.userData = newUser;
-            } else {
-                if(supabase) {
-                    const { data } = await supabase.from('users').select('*').eq('phone', phone).eq('password', pass).single();
-                    if(data) window.userData = data; else { alert("خطأ في البيانات."); return; }
-                } else {
-                    const stored = JSON.parse(localStorage.getItem('mayar_user_data_secure_vfinal_fix_v4'));
-                    if(stored && stored.phone === phone && stored.password === pass) window.userData = stored;
-                    else { alert("برجاء إنشاء حساب أولاً."); return; }
-                }
-            }
-            renderUserData(window.userData); window.showPlatform(); updateVisitorCount();
-        }
-
-        function renderUserData(data) {
-            const welcome = document.getElementById('welcome-msg');
-            if (welcome) welcome.innerText = `${data.name || 'مستخدم'} | ${data.study || ''}`;
-            const headerName = document.getElementById('header-user-name');
-            if (headerName) headerName.innerText = (data.name || 'حسابي').split(' ')[0];
-            const mName = document.getElementById('modal-user-name');
-            const mStudy = document.getElementById('modal-user-study');
-            if(mName) mName.innerText = data.name || '...';
-            if(mStudy) mStudy.innerText = `طالب / ${data.study || '...'}`;
-            if (data.profilePic) {
-                const hPic = document.getElementById('header-profile-pic');
-                const mPic = document.getElementById('modal-profile-pic');
-                if(hPic) hPic.src = data.profilePic;
-                if(mPic) mPic.src = data.profilePic;
-            }
-        }
-
-        window.uploadProfilePic = (event) => {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const base64 = e.target.result;
-                window.userData.profilePic = base64;
-                renderUserData(window.userData);
-                if(supabase) await supabase.from('users').update({ profilePic: base64 }).eq('phone', window.userData.phone);
-            };
-            reader.readAsDataURL(file);
-        };
-
-        // --- 3D ENGINE ---
-        let scene, camera, renderer, crystal;
-        function init3D() {
-            const container = document.getElementById('three-container');
-            const canvas = document.getElementById('three-d-canvas');
-            if(!canvas || !container || scene) return;
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, container.clientWidth / 400, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, 400);
-            const geometry = new THREE.IcosahedronGeometry(2, 0);
-            const material = new THREE.MeshPhongMaterial({ color: 0xfacc15, wireframe: true });
-            crystal = new THREE.Mesh(geometry, material);
-            scene.add(crystal);
-            const light = new THREE.PointLight(0xffffff, 1, 100); light.position.set(10, 10, 10); scene.add(light);
-            scene.add(new THREE.AmbientLight(0x404040));
-            camera.position.z = 5;
-            const animate = () => { requestAnimationFrame(animate); crystal.rotation.y += 0.01; crystal.rotation.x += 0.005; renderer.render(scene, camera); };
-            animate();
-        }
 
         // --- UNITS DATABASE ---
         const unitsDB = {
@@ -531,236 +269,347 @@
                 {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
                 {n:"مليمتر (mm)", s:"mm", f:0.001}, {n:"سنتيمتر (cm)", s:"cm", f:0.01}, {n:"ديسيمتر (dm)", s:"dm", f:0.1}, 
                 {n:"متر (m)", s:"m", f:1}, {n:"كيلومتر (km)", s:"km", f:1000}, {n:"بوصة (in)", s:"in", f:0.0254}, 
-                {n:"قدم (ft)", s:"ft", f:0.3048}, {n:"ميل بحري", s:"nmi", f:1852}, {n:"سنة ضوئية (ly)", s:"ly", f:9.461e15}, {n:"فرسخ فلكي (pc)", s:"pc", f:3.086e16}
+                {n:"قدم (ft)", s:"ft", f:0.3048}, {n:"ميل بحري", s:"nmi", f:1852}
             ]},
             mass_all: { label: "الكتلة والوزن ⚖️", units: [
                 {n:"مليجرام (mg)", s:"mg", f:1e-6}, {n:"جرام (g)", s:"g", f:0.001}, {n:"كيلوجرام (kg)", s:"kg", f:1}, 
-                {n:"طن (ton)", s:"ton", f:1000}, {n:"قنطار", s:"qin", f:100}, {n:"أونصة (oz)", s:"oz", f:0.0283}, {n:"رطل (lb)", s:"lb", f:0.453}
+                {n:"طن (ton)", s:"ton", f:1000}, {n:"رطل (lb)", s:"lb", f:0.453}
             ]},
-            elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}, {n:"ميكرو أمبير (μA)", s:"uA", f:1e-6}, {n:"كيلو أمبير", s:"kA", f:1e3}]},
-            elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت (mV)", s:"mV", f:1e-3}]},
-            elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجـا أوم (MO)", s:"MO", f:1e6}]},
-            elec_power: { label: "القدرة 💡", units: [{n:"وات (W)", s:"W", f:1}, {n:"كيلو وات (kW)", s:"kW", f:1e3}, {n:"حصان (hp)", s:"hp", f:745.7}]},
-            elec_extra: { label: "حث وسعة وفيض ⚛️", units: [{n:"كولوم", s:"C", f:1}, {n:"هنري (H)", s:"H", f:1}, {n:"فاراد (F)", s:"F", f:1}, {n:"تسلا (T)", s:"T", f:1}, {n:"ويبر (Wb)", s:"Wb", f:1}]},
-            temperature: { label: "درجة الحرارة 🌡️", isTemp: true, units: [{n:"سيليزيوس", s:"C"}, {n:"كلفن", s:"K"}, {n:"فهرنهايت", s:"F"}]},
-            data_storage: { label: "وحدات التخزين 💾", units: [{n:"Byte (B)", s:"B", f:1}, {n:"Kilobyte (KB)", s:"KB", f:1024}, {n:"Megabyte (MB)", s:"MB", f:1024**2}, {n:"Gigabyte (GB)", s:"GB", f:1024**3}, {n:"Terabyte (TB)", s:"TB", f:1024**4}]}
+            elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}]},
+            elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}]},
+            elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}]},
+            data_storage: { label: "وحدات التخزين 💾", units: [{n:"Byte (B)", s:"B", f:1}, {n:"KB", s:"KB", f:1024}, {n:"MB", s:"MB", f:1024**2}, {n:"GB", s:"GB", f:1024**3}]}
         };
 
         const portalData = {
-            home: { badge: "WELCOME HOME", title: "الواجهة الرئيسية", dims: [] },
-            general: { badge: "General Hub", dims: ['length_all', 'mass_all', 'temperature'] },
-            secondary: { badge: "Physics Hub", dims: ['length_all', 'mass_all', 'temperature', 'elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] },
-            engineering: { badge: "Eng Mode", dims: ['length_all', 'elec_res'] },
-            cs: { badge: "CS Mode", dims: ['data_storage'] },
-            ultra_calc: { badge: "Ultra Calc", dims: [] },
-            numbers: { badge: "Binary Mode", dims: [] }
+            home: { dims: [] },
+            general: { dims: ['length_all', 'mass_all'] },
+            secondary: { dims: ['length_all', 'mass_all', 'elec_current', 'elec_voltage', 'elec_res'] },
+            engineering: { dims: ['length_all', 'elec_res'] },
+            cs: { dims: ['data_storage'] },
+            ultra_calc: { dims: [] }
         };
 
-        const secondarySubDims = { basic: ['length_all', 'mass_all', 'temperature'], electricity: ['elec_current', 'elec_voltage', 'elec_res', 'elec_power', 'elec_extra'] };
+        // --- LOCAL STORAGE CORE ---
+        window.saveLocal = function() {
+            if(window.userData) localStorage.setItem('mayar_user_data', JSON.stringify(window.userData));
+            localStorage.setItem('mayar_history_data', JSON.stringify(window.historyData));
+        };
 
-        // --- UI CORE ---
-        window.setPortal = (key) => {
-            window.currentPortalKey = key; 
+        window.loadLocal = function() {
+            const savedUser = localStorage.getItem('mayar_user_data');
+            const savedHistory = localStorage.getItem('mayar_history_data');
+            if(savedUser) window.userData = JSON.parse(savedUser);
+            if(savedHistory) window.historyData = JSON.parse(savedHistory);
+        };
+
+        // --- UI CORE FUNCTIONS ---
+        window.setPortal = function(key) {
+            window.currentPortalKey = key;
             document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
             
-            const isHome = (key === 'home'), isSec = (key === 'secondary'), isCalc = (key === 'ultra_calc'), isCS = (key === 'cs');
-            
-            const views = ['home-view', 'secondary-nav', 'cs-nav', 'ultra-calc-view', 'converter-view', 'regex-view', 'quiz-view', 'modern-msg-view'];
-            views.forEach(v => {
-                const el = document.getElementById(v);
-                if(el) el.style.display = 'none';
-            });
+            const views = ['home-view', 'converter-view', 'regex-view', 'ultra-calc-view', 'secondary-nav', 'cs-nav', 'quiz-view'];
+            views.forEach(v => { if(document.getElementById(v)) document.getElementById(v).classList.add('hidden'); });
 
-            if (isHome) { const hv = document.getElementById('home-view'); if(hv) hv.style.display = 'grid'; setTimeout(init3D, 100); }
-            if (isSec) { const sn = document.getElementById('secondary-nav'); if(sn) sn.style.display = 'flex'; window.setSecondaryMode('basic'); }
-            if (isCS) { const cn = document.getElementById('cs-nav'); if(cn) cn.style.display = 'flex'; window.setCSMode('units'); }
-            if (isCalc) { const ucv = document.getElementById('ultra-calc-view'); if(ucv) ucv.style.display = 'block'; }
-            
-            if (!isHome && !isCalc && !isCS && !isSec) {
-                const cv = document.getElementById('converter-view');
-                if(cv) cv.style.display = 'grid';
-                window.filterDimensions();
-            }
-            
-            document.body.classList.toggle('tech-mode', key === 'numbers');
-        };
-
-        window.setSecondaryMode = (m) => {
-            window.currentSecondaryMode = m; 
-            document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + m));
-            
-            const cv = document.getElementById('converter-view');
-            const mv = document.getElementById('modern-msg-view');
-            const qv = document.getElementById('quiz-view');
-            
-            if(cv) cv.style.display = (m === 'basic' || m === 'electricity') ? 'grid' : 'none';
-            if(mv) mv.style.display = (m === 'modern') ? 'block' : 'none';
-            if(qv) qv.style.display = (m === 'quiz') ? 'block' : 'none';
-            
-            if (m === 'quiz') window.startQuiz(); else if (m !== 'modern') window.filterDimensions();
-        };
-
-        window.setCSMode = (m) => {
-            window.currentCSMode = m; 
-            document.querySelectorAll('#cs-nav .sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 'cs-' + m));
-            
-            const cv = document.getElementById('converter-view');
-            const rv = document.getElementById('regex-view');
-            
-            if(cv) cv.style.display = (m === 'units') ? 'grid' : 'none';
-            if(rv) rv.style.display = (m === 'regex') ? 'flex' : 'none';
-            
-            if(m === 'units') window.filterDimensions(); 
-            else window.initRegexLab();
-        };
-
-        window.filterDimensions = () => {
-            const ds = document.getElementById('dimension-select'); if(!ds) return; ds.innerHTML = '';
-            const portal = portalData[window.currentPortalKey] || { dims: [] };
-            let dims = (window.currentPortalKey === 'secondary') ? secondarySubDims[window.currentSecondaryMode] : (portal.dims || []);
-            dims.forEach(d => { if(unitsDB[d]) ds.add(new Option(unitsDB[d].label, d)) }); window.loadUnits();
-        };
-
-        window.loadUnits = () => {
-            const ds = document.getElementById('dimension-select'); if(!ds || !ds.value) return;
-            const units = unitsDB[ds.value].units; const f = document.getElementById('unit-from'), t = document.getElementById('unit-to');
-            if(f && t) {
-                f.innerHTML = ''; t.innerHTML = '';
-                units.forEach(u => { f.add(new Option(`${u.n} (${u.s})`, u.s)); t.add(new Option(`${u.n} (${u.s})`, u.s)); });
-                t.selectedIndex = units.length > 1 ? 1 : 0; window.runConversion();
-            }
-        };
-
-        window.runConversion = () => {
-            const valInput = document.getElementById('input-value'); if(!valInput) return;
-            const ds = document.getElementById('dimension-select'); if(!ds || !ds.value) return;
-            const uF = unitsDB[ds.value].units.find(u => u.s === document.getElementById('unit-from').value);
-            const uT = unitsDB[ds.value].units.find(u => u.s === document.getElementById('unit-to').value);
-            let res;
-            if (unitsDB[ds.value].isTemp) {
-                let c = (uF.s==='C')?parseFloat(valInput.value) : (uF.s==='K')?parseFloat(valInput.value)-273.15 : (parseFloat(valInput.value)-32)*5/9;
-                res = (uT.s==='C')?c : (uT.s==='K')?parseFloat(c)+273.15 : (c*9/5)+32;
+            if(key === 'home') {
+                document.getElementById('home-view').classList.remove('hidden');
+                window.init3D();
+            } else if(key === 'secondary') {
+                document.getElementById('secondary-nav').classList.remove('hidden');
+                window.setSecondaryMode('basic');
+            } else if(key === 'cs') {
+                document.getElementById('cs-nav').classList.remove('hidden');
+                window.setCSMode('units');
+            } else if(key === 'ultra_calc') {
+                document.getElementById('ultra-calc-view').classList.remove('hidden');
             } else {
-                res = (parseFloat(valInput.value) * uF.f) / uT.f;
+                document.getElementById('converter-view').classList.remove('hidden');
+                window.fillDims(key);
             }
-            const outStr = (res === 0) ? "0" : (Math.abs(res) > 1e10 || Math.abs(res) < 1e-5) ? res.toExponential(4) : parseFloat(res.toFixed(8)).toString();
-            const outVal = document.getElementById('output-val');
-            if(outVal) outVal.innerText = outStr;
         };
 
-        // --- REGEX LAB LOGIC ---
-        window.initRegexLab = () => {
+        window.setSecondaryMode = function(m) {
+            document.querySelectorAll('#secondary-nav .sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + m));
+            const conv = document.getElementById('converter-view');
+            const quiz = document.getElementById('quiz-view');
+            
+            if(m === 'quiz') {
+                if(conv) conv.classList.add('hidden');
+                if(quiz) quiz.classList.remove('hidden');
+            } else {
+                if(quiz) quiz.classList.add('hidden');
+                if(conv) conv.classList.remove('hidden');
+                window.fillDims('secondary');
+                if(m === 'electricity') {
+                    const ds = document.getElementById('dimension-select');
+                    if(ds) { ds.value = 'elec_current'; window.loadUnits(); }
+                }
+            }
+        };
+
+        window.setCSMode = function(m) {
+            document.querySelectorAll('#cs-nav .sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 'cs-' + m));
+            const conv = document.getElementById('converter-view');
+            const regex = document.getElementById('regex-view');
+            if(m === 'regex') {
+                if(conv) conv.classList.add('hidden');
+                if(regex) regex.classList.remove('hidden');
+                window.initRegexLab();
+            } else {
+                if(regex) regex.classList.add('hidden');
+                if(conv) conv.classList.remove('hidden');
+                window.fillDims('cs');
+            }
+        };
+
+        window.fillDims = function(portalKey) {
+            const ds = document.getElementById('dimension-select');
+            if(!ds) return;
+            ds.innerHTML = '';
+            const dims = portalData[portalKey].dims;
+            dims.forEach(d => { if(unitsDB[d]) ds.add(new Option(unitsDB[d].label, d)); });
+            window.loadUnits();
+        };
+
+        window.loadUnits = function() {
+            const ds = document.getElementById('dimension-select');
+            if(!ds || !ds.value) return;
+            const dim = ds.value;
+            const f = document.getElementById('unit-from');
+            const t = document.getElementById('unit-to');
+            if(!f || !t) return;
+            f.innerHTML = ''; t.innerHTML = '';
+            unitsDB[dim].units.forEach(u => {
+                f.add(new Option(`${u.n} (${u.s})`, u.s));
+                t.add(new Option(`${u.n} (${u.s})`, u.s));
+            });
+            t.selectedIndex = 1;
+            window.runConversion();
+        };
+
+        window.runConversion = function() {
+            const ds = document.getElementById('dimension-select');
+            const valInput = document.getElementById('input-value');
+            const uFrom = document.getElementById('unit-from');
+            const uTo = document.getElementById('unit-to');
+            const outVal = document.getElementById('output-val');
+            
+            if(!ds || !valInput || !uFrom || !uTo || !outVal || !ds.value) return;
+            
+            const dim = ds.value;
+            const val = parseFloat(valInput.value) || 0;
+            const uF = unitsDB[dim].units.find(u => u.s === uFrom.value);
+            const uT = unitsDB[dim].units.find(u => u.s === uTo.value);
+            
+            const res = (val * uF.f) / uT.f;
+            outVal.innerText = res.toLocaleString();
+            
+            if(val !== 0) {
+                const log = `${val} ${uF.s} = ${res.toFixed(4)} ${uT.s}`;
+                if(!window.historyData.includes(log)) {
+                    window.historyData.unshift(log);
+                    window.historyData = window.historyData.slice(0, 10);
+                    window.saveLocal();
+                    window.renderHistory();
+                }
+            }
+        };
+
+        window.swapUnits = function() {
+            const f = document.getElementById('unit-from');
+            const t = document.getElementById('unit-to');
+            if(f && t) {
+                const temp = f.value;
+                f.value = t.value;
+                t.value = temp;
+                window.runConversion();
+            }
+        };
+
+        window.renderHistory = function() {
+            const list = document.getElementById('history-list');
+            if(list) list.innerHTML = window.historyData.map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 text-center font-mono animate-fade">${h}</div>`).join('') || '<p class="text-slate-600 italic text-center text-xs">لا يوجد تحويلات مسجلة</p>';
+        };
+
+        // --- REGEX ENGINE ---
+        window.initRegexLab = function() {
             const patternInput = document.getElementById('regex-pattern-input');
             const testArea = document.getElementById('regex-test-area');
             const backdrop = document.getElementById('regex-backdrop-layer');
-            const matchContainer = document.getElementById('regex-match-list');
-            const explArea = document.getElementById('regex-explanation-area');
-            const errTag = document.getElementById('regex-error-tag');
+            if(!patternInput || !testArea || !backdrop) return;
 
             const update = () => {
-                const pat = patternInput.value; const txt = testArea.value; 
-                const flags = document.getElementById('regex-flags-input').innerText;
-                if(!pat) { backdrop.innerHTML = txt; matchContainer.innerHTML = ''; explArea.innerHTML = "Insert your pattern..."; return; }
-
+                const pat = patternInput.value;
+                const txt = testArea.value;
+                if(!pat) { backdrop.innerHTML = escapeHtml(txt); return; }
                 try {
-                    const re = new RegExp(pat, flags.includes('g') ? flags : flags + 'g');
-                    const matches = [...txt.matchAll(re)];
-                    let highlighted = ""; let last = 0; matchContainer.innerHTML = "";
-                    
-                    matches.forEach((m, i) => {
-                        highlighted += escapeHtml(txt.slice(last, m.index));
-                        const cls = i % 2 === 0 ? "regex-match" : "regex-match-alt";
-                        highlighted += `<span class="${cls}">${escapeHtml(m[0])}</span>`;
-                        last = m.index + m[0].length;
-
-                        const info = document.createElement('div');
-                        info.className = "p-3 bg-white/5 border-l-2 border-blue-500 rounded-r text-[10px] font-mono animate-fade";
-                        info.innerHTML = `<div class='text-slate-500'>Match ${i+1} (${m.index}-${m.index+m[0].length})</div><div class='text-blue-400 break-all'>${m[0]}</div>`;
-                        matchContainer.appendChild(info);
-                    });
-                    highlighted += escapeHtml(txt.slice(last));
+                    const re = new RegExp(pat, 'g');
+                    let highlighted = txt.replace(re, m => `<span class="regex-match">${escapeHtml(m)}</span>`);
                     backdrop.innerHTML = highlighted;
-                    errTag.classList.add('hidden');
-
-                    let explArr = [];
-                    if(pat.includes('\\d')) explArr.push("<b>\\d</b>: Matches any digit (0-9).");
-                    if(pat.includes('\\w')) explArr.push("<b>\\w</b>: Matches word chars (a-z, A-Z, 0-9, _).");
-                    if(pat.includes('.')) explArr.push("<b>.</b>: Matches any character except newline.");
-                    if(pat.includes('+')) explArr.push("<b>+</b>: Quantifier — Matches 1 or more.");
-                    if(pat.includes('(')) explArr.push("<b>(...)</b>: Capturing Group.");
-                    explArea.innerHTML = explArr.length > 0 ? explArr.join('<br>') : "Valid pattern active.";
-                } catch(e) { errTag.classList.remove('hidden'); backdrop.innerHTML = escapeHtml(txt); explArea.innerHTML = "<span class='text-red-400'>Invalid Pattern Structure</span>"; }
+                } catch(e) { backdrop.innerHTML = escapeHtml(txt); }
             };
-            function escapeHtml(text) { return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-            patternInput.oninput = update; testArea.oninput = update;
+            function escapeHtml(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+            patternInput.oninput = update;
+            testArea.oninput = update;
             testArea.onscroll = () => backdrop.scrollTop = testArea.scrollTop;
             update();
         };
 
-        // --- CALC ---
-        window.setCalcMode = (m) => { 
-            document.querySelectorAll('.calc-tab-btn').forEach(b => b.className = 'calc-tab-btn px-4 py-2 text-xs font-bold text-slate-400'); 
-            const tab = document.getElementById('cm-'+m);
-            if(tab) tab.className = 'calc-tab-btn px-4 py-2 text-xs font-bold text-yellow-400 border-b-2 border-yellow-400'; 
-            document.querySelectorAll('.calc-pane').forEach(p => p.classList.add('hidden')); 
-            const pane = document.getElementById('calc-pane-'+m);
-            if(pane) pane.classList.remove('hidden'); 
+        // --- AUTH & ACCOUNT ---
+        window.switchAuthTab = function(mode) {
+            const loginBtn = document.getElementById('tab-login');
+            const signupBtn = document.getElementById('tab-signup');
+            const signupFields = document.getElementById('signup-fields');
+            loginBtn.className = mode === 'login' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
+            signupBtn.className = mode === 'signup' ? 'flex-1 py-2 rounded-lg text-xs font-black bg-yellow-400 text-black' : 'flex-1 py-2 rounded-lg text-xs font-black text-white';
+            signupFields.classList.toggle('hidden', mode === 'login');
+            window.currentAuthMode = mode;
         };
+
+        window.renderApp = function() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('welcome-msg').innerText = `${window.userData.name} | ${window.userData.study}`;
+            document.getElementById('header-user-name').innerText = window.userData.name.split(' ')[0];
+            document.getElementById('modal-user-name').innerText = window.userData.name;
+            document.getElementById('modal-user-study').innerText = window.userData.study;
+            if(window.userData.profilePic) {
+                document.getElementById('header-profile-pic').src = window.userData.profilePic;
+                document.getElementById('modal-profile-pic').src = window.userData.profilePic;
+            }
+            window.renderHistory();
+            window.setPortal('home');
+        };
+
+        window.logout = () => { localStorage.removeItem('mayar_user_data'); location.reload(); };
+
+        window.uploadProfilePic = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                window.userData.profilePic = event.target.result;
+                window.saveLocal();
+                window.renderApp();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // --- 3D ENGINE ---
+        let scene, crystal;
+        window.init3D = function() {
+            if(scene) return;
+            const container = document.getElementById('three-container');
+            const canvas = document.getElementById('three-d-canvas');
+            if(!container || !canvas) return;
+            scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth/400, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, 400);
+            const geometry = new THREE.IcosahedronGeometry(2, 0);
+            const material = new THREE.MeshPhongMaterial({ color: 0xfacc15, wireframe: true });
+            crystal = new THREE.Mesh(geometry, material);
+            scene.add(crystal);
+            const light = new THREE.PointLight(0xffffff, 1, 100); light.position.set(10,10,10); scene.add(light);
+            camera.position.z = 5;
+            function animate() { requestAnimationFrame(animate); crystal.rotation.y += 0.01; crystal.rotation.x += 0.005; renderer.render(scene, camera); }
+            animate();
+        };
+
+        // --- QUIZ LOGIC ---
+        window.ansArr = [];
+        window.startQuiz = function() {
+            const pool = [
+                {q: "وحدة قياس فرق الجهد؟", o: ["أمبير", "فولت", "أوم", "وات"], a: 1},
+                {q: "قانون أوم يربط بين؟", o: ["الكتلة والسرعة", "الجهد والتيار", "القوة والزمن", "الشحنة والمسافة"], a: 1},
+                {q: "أسرع وسيلة لنقل البيانات؟", o: ["الألياف الضوئية", "الأسلاك النحاسية", "الأقمار الصناعية", "البريد"], a: 0}
+            ];
+            document.getElementById('quiz-intro').classList.add('hidden');
+            const c = document.getElementById('quiz-container');
+            c.classList.remove('hidden'); c.innerHTML = '';
+            pool.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = 'glass-card p-6 rounded-2xl mb-4 text-right';
+                d.innerHTML = `<h4 class='font-bold mb-3'>${i + 1}. ${q.q}</h4><div class='grid grid-cols-2 gap-3'>${q.o.map((o, j) => `<div onclick='window.selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-4 rounded-xl text-xs text-center'>${o}</div>`).join('')}</div>`;
+                c.appendChild(d);
+            });
+            const b = document.createElement('button');
+            b.className = "w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText = "تصحيح ✅";
+            b.onclick = () => window.finishQuiz(pool);
+            c.appendChild(b);
+            window.ansArr = new Array(pool.length).fill(null);
+        };
+
+        window.selectOption = (i, j) => {
+            for (let k = 0; k < 4; k++) {
+                const opt = document.getElementById(`q-${i}-o-${k}`);
+                if (opt) opt.classList.remove('selected');
+            }
+            const sel = document.getElementById(`q-${i}-o-${j}`);
+            if (sel) sel.classList.add('selected');
+            window.ansArr[i] = j;
+        };
+
+        window.finishQuiz = (p) => {
+            let s = 0;
+            p.forEach((q, i) => { if (window.ansArr[i] === q.a) s++; });
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('score-text').innerText = `${s} / ${p.length}`;
+        };
+
+        window.resetQuiz = () => {
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-intro').classList.remove('hidden');
+        };
+
+        // --- UTILS ---
         window.calcIn = (v) => { const s = document.getElementById('calc-screen'); if(s.innerText==='0') s.innerText=v; else s.innerText+=v; };
         window.calcAC = () => document.getElementById('calc-screen').innerText='0';
         window.calcDel = () => { const s = document.getElementById('calc-screen'); s.innerText = s.innerText.slice(0,-1) || '0'; };
         window.calcRes = () => { try { document.getElementById('calc-screen').innerText = math.evaluate(document.getElementById('calc-screen').innerText); } catch { document.getElementById('calc-screen').innerText='Error'; } };
-        window.solveAlg = () => { const exp = document.getElementById('alg-expr').value; const res = document.getElementById('alg-output'); try { const sol = nerdamer.solveEquations(exp); res.innerHTML = `Solutions: ${sol.toString()}`; res.classList.remove('hidden'); } catch { res.innerText='Error'; res.classList.remove('hidden'); } };
-        window.draw3DPlot = () => {
-            const expr = document.getElementById('graph-expr-3d').value;
-            const x = math.range(-5, 5, 0.5).toArray(); const y = math.range(-5, 5, 0.5).toArray();
-            const z = x.map(xv => y.map(yv => math.evaluate(expr, {x: xv, y: yv})));
-            Plotly.newPlot('graph-plot-3d', [{z, type: 'surface'}], { paper_bgcolor: 'rgba(0,0,0,0)', font: {color: '#fff'}, margin: {t:0, b:0, l:0, r:0} });
+        window.toggleAccountModal = (s) => document.getElementById('account-modal').classList.toggle('hidden', !s);
+        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); window.showToast("تم النسخ ✅"); };
+        window.showToast = (m) => { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); };
+        window.triggerFireworkTheme = () => {
+            const container = document.getElementById('firework-container');
+            container.style.display = 'flex';
+            setTimeout(() => { document.body.classList.toggle('light-mode'); }, 550);
+            setTimeout(() => { container.style.display = 'none'; }, 1500);
         };
 
-        // --- GLOBAL ACTIONS ---
-        window.triggerFireworkTheme = () => { const container = document.getElementById('firework-container'); container.style.display = 'flex'; setTimeout(() => { document.body.classList.toggle('light-mode'); }, 550); setTimeout(() => { container.style.display = 'none'; }, 1500); };
-        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); showToast("تم النسخ ✅"); };
-        function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
-        
-        async function updateVisitorCount() {
-            if(!supabase) return;
-            const { data } = await supabase.from('analytics').select('count').eq('id', 1).single();
-            let count = data ? data.count + 1 : 1500;
-            await supabase.from('analytics').upsert({ id: 1, count: count });
-            const v = document.getElementById('visitor-count');
-            if(v) v.innerText = count + "+";
-        }
-
-        window.sendAIMessage = async () => { /* Logic */ };
-        window.startQuiz = () => {
-            const pool = [{q:"وحدة قياس فرق الجهد؟",o:["أمبير","فولت","أوم","وات"],a:1},{q:"قانون أوم يربط بين؟",o:["الكتلة والسرعة","الجهد والتيار","القوة والزمن","الشحنة والمسافة"],a:1}];
-            document.getElementById('quiz-intro').style.display='none'; const c=document.getElementById('quiz-container'); c.style.display='block'; c.innerHTML='';
-            pool.forEach((q,i)=>{
-                const d=document.createElement('div'); d.className='glass-card p-6 rounded-2xl mb-4 text-right';
-                d.innerHTML=`<h4 class='font-bold mb-3'>${i+1}. ${q.q}</h4><div class='grid grid-cols-2 gap-3'>${q.o.map((o,j)=>`<div onclick='window.selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-4 rounded-xl text-xs text-right text-center'>${o}</div>`).join('')}</div>`;
-                c.appendChild(d);
-            });
-            const b = document.createElement('button'); b.className="w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText="تصحيح ✅";
-            b.onclick=()=>window.finishQuiz(pool); c.appendChild(b); window.ansArr=new Array(pool.length).fill(null);
-        };
-        window.selectOption=(i,j)=>{for(let k=0;k<4;k++){ const opt = document.getElementById(`q-${i}-o-${k}`); if(opt) opt.classList.remove('selected'); } const sel = document.getElementById(`q-${i}-o-${j}`); if(sel) sel.classList.add('selected'); window.ansArr[i]=j;};
-        window.finishQuiz=(p)=>{let s=0; p.forEach((q,i)=>{if(window.ansArr[i]===q.a)s++;}); const qc = document.getElementById('quiz-container'); const qr = document.getElementById('quiz-result'); if(qc) qc.style.display='none'; if(qr) qr.style.display='block'; const st = document.getElementById('score-text'); if(st) st.innerText=`${s}/${p.length}`;};
-        window.resetQuiz=()=>{ const qr = document.getElementById('quiz-result'); const qi = document.getElementById('quiz-intro'); if(qr) qr.style.display='none'; if(qi) qi.style.display='block';};
-
-        window.swapUnits = () => { 
-            const f = document.getElementById('unit-from'); 
-            const t = document.getElementById('unit-to'); 
-            if(f && t) { [f.value, t.value] = [t.value, f.value]; window.runConversion(); }
+        // --- AUTH FORM ---
+        document.getElementById('auth-form').onsubmit = (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('auth-phone').value;
+            if(window.currentAuthMode === 'signup') {
+                window.userData = {
+                    name: document.getElementById('reg-name').value,
+                    phone: phone,
+                    study: document.getElementById('reg-study').value,
+                    profilePic: null
+                };
+            } else {
+                if(!window.userData || window.userData.phone !== phone) {
+                    window.userData = { name: "مستخدم زائر", phone: phone, study: "عام" };
+                }
+            }
+            window.saveLocal();
+            window.renderApp();
         };
 
-        startSystem();
-
-        const matrixC = document.getElementById('matrix-canvas'); const matrixCtx = matrixC.getContext('2d');
-        let mw, mh, mcl, mfs=16, mdp=[];
-        function initMatrix(){ if(!matrixC) return; mw=matrixC.width=window.innerWidth; mh=matrixC.height=window.innerHeight; mcl=Math.floor(mw/mfs); mdp=new Array(mcl).fill(1); }
-        function drawMatrix(){ if(!matrixC || window.currentPortalKey !== 'numbers') return; matrixCtx.fillStyle='rgba(0,0,0,0.05)'; matrixCtx.fillRect(0,0,mw,mh); matrixCtx.fillStyle='#facc15'; matrixCtx.font=mfs+'px monospace'; for(let i=0; i<mdp.length; i++){ matrixCtx.fillText(Math.floor(Math.random()*2), i*mfs, mdp[i]*mfs); if(mdp[i]*mfs > mh && Math.random() > 0.975) mdp[i]=0; mdp[i]++; } }
-        window.onresize = initMatrix; setInterval(drawMatrix, 50); initMatrix();
+        // --- STARTUP ---
+        window.onload = () => {
+            window.loadLocal();
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    if(window.userData) window.renderApp(); 
+                    else document.getElementById('auth-screen').classList.remove('hidden');
+                }, 700);
+            }, 1000);
+        };
     </script>
 </body>
 </html>
