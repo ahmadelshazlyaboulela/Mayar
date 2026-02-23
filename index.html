@@ -56,6 +56,11 @@
         .calc-btn:hover { background: rgba(255,255,255,0.15); }
 
         #ai-chat-window { display: none; position: fixed; bottom: 100px; right: 24px; width: 350px; height: 500px; background: rgba(10,10,10,0.95); border: 2px solid var(--ai-blue); border-radius: 2rem; z-index: 8000; flex-direction: column; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        
+        /* مخصص لقسم الحاسبات الجديد */
+        .cs-systems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .cs-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.5rem; padding: 1.5rem; transition: all 0.3s; }
+        .cs-card:hover { border-color: var(--ai-blue); background: rgba(59, 130, 246, 0.05); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -135,6 +140,7 @@
 
             <div id="cs-nav" class="hidden mb-6 flex flex-wrap justify-center gap-2 animate-fade">
                 <button onclick="window.setCSMode('units')" id="cs-units" class="sub-nav-btn active">وحدات التخزين</button>
+                <button onclick="window.setCSMode('systems')" id="cs-systems" class="sub-nav-btn">🔢 الأنظمة العددية</button>
                 <button onclick="window.setCSMode('regex')" id="cs-regex" class="sub-nav-btn border-blue-400/20 text-blue-400">🤖 Regex Hub</button>
             </div>
 
@@ -178,6 +184,46 @@
                         <div id="result-box" class="w-full p-8 min-h-[140px] flex flex-col items-center justify-center rounded-[2.5rem] bg-yellow-400 text-black shadow-inner relative group text-center">
                             <span id="output-val" class="text-4xl font-black break-all font-mono">0</span>
                             <button onclick="window.copyToClipboard()" class="absolute top-4 left-4 p-2 bg-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مختبر الأنظمة العددية (New CS Section) -->
+                <div id="cs-systems-view" class="hidden space-y-6 animate-fade text-right">
+                    <div class="glass-card p-6 rounded-3xl border border-ai-blue/20">
+                        <h3 class="text-xl font-black text-blue-400 mb-4 flex items-center gap-3"><span>💻</span> مختبر الحوسبة والأنظمة</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <label class="text-xs font-bold text-slate-500">القيمة المراد تحويلها</label>
+                                <input type="text" id="sys-input" placeholder="أدخل القيمة هنا..." oninput="window.runSystemConversion()" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-ai-blue font-mono text-center">
+                                <label class="text-xs font-bold text-slate-500">نظام المصدر</label>
+                                <select id="sys-from" onchange="window.runSystemConversion()" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none cursor-pointer font-bold">
+                                    <optgroup label="Systems">
+                                        <option value="10">Decimal (Base 10)</option>
+                                        <option value="2">Binary (Base 2)</option>
+                                        <option value="8">Octal (Base 8)</option>
+                                        <option value="16">Hexadecimal (Base 16)</option>
+                                        <option value="1">Unary (Base 1)</option>
+                                        <option value="3">Ternary (Base 3)</option>
+                                        <option value="32">Base 32</option>
+                                        <option value="36">Base 36</option>
+                                        <option value="64">Base 64</option>
+                                    </optgroup>
+                                    <optgroup label="Encoding/Other">
+                                        <option value="ascii">ASCII Text</option>
+                                        <option value="roman">Roman Numerals</option>
+                                        <option value="gray">Gray Code</option>
+                                        <option value="bcd">BCD</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="text-xs font-bold text-slate-500">المعالج الذكي - النتائج التفصيلية</label>
+                                <div id="sys-results" class="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <!-- Results dynamically filled -->
+                                    <div class="text-slate-500 text-center italic py-10">ابدأ الكتابة للتحليل...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -301,7 +347,7 @@
         window.historyData = [];
         window.currentAuthMode = 'login';
 
-        // --- UNITS DATABASE (EXPANDED) ---
+        // --- UNITS DATABASE (EXPANDED FOR DATA UNITS) ---
         const unitsDB = {
             length_all: { label: "الطول والمسافات 📏", units: [
                 {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
@@ -316,7 +362,19 @@
             elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}, {n:"ميكرو أمبير", s:"uA", f:1e-6}]},
             elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت", s:"mV", f:1e-3}]},
             elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجا أوم", s:"MO", f:1e6}]},
-            data_storage: { label: "وحدات التخزين 💾", units: [{n:"Byte (B)", s:"B", f:1}, {n:"KB", s:"KB", f:1024}, {n:"MB", s:"MB", f:1024**2}, {n:"GB", s:"GB", f:1024**3}, {n:"TB", s:"TB", f:1024**4}]},
+            data_storage: { label: "وحدات التخزين 💾", units: [
+                {n:"bit", s:"bit", f:0.125},
+                {n:"nibble", s:"nib", f:0.5},
+                {n:"byte", s:"B", f:1},
+                {n:"KB", s:"KB", f:1024},
+                {n:"MB", s:"MB", f:1024**2},
+                {n:"GB", s:"GB", f:1024**3},
+                {n:"TB", s:"TB", f:1024**4},
+                {n:"PB", s:"PB", f:1024**5},
+                {n:"EB", s:"EB", f:1024**6},
+                {n:"ZB", s:"ZB", f:1024**7},
+                {n:"YB", s:"YB", f:1024**8}
+            ]},
             pressure: { label: "الضغط 🌪️", units: [{n:"Pascal (Pa)", s:"Pa", f:1}, {n:"Bar", s:"bar", f:1e5}, {n:"ATM", s:"atm", f:101325}, {n:"PSI", s:"psi", f:6894.76}]},
             energy: { label: "الطاقة والشغل 💥", units: [{n:"Joule (J)", s:"J", f:1}, {n:"Calories", s:"cal", f:4.184}, {n:"Kilo-Watt Hour", s:"kWh", f:3.6e6}, {n:"EV", s:"eV", f:1.602e-19}]},
             speed: { label: "السرعة 🏎️", units: [{n:"m/s", s:"ms", f:1}, {n:"km/h", s:"kmh", f:0.2777}, {n:"Mile/h", s:"mph", f:0.447}, {n:"Knot", s:"knot", f:0.5144}]}
@@ -349,7 +407,7 @@
             window.currentPortalKey = key;
             document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
             
-            const views = ['home-view', 'converter-view', 'regex-view', 'ultra-calc-view', 'secondary-nav', 'cs-nav', 'quiz-view'];
+            const views = ['home-view', 'converter-view', 'regex-view', 'ultra-calc-view', 'secondary-nav', 'cs-nav', 'quiz-view', 'cs-systems-view'];
             views.forEach(v => {
                 const el = document.getElementById(v);
                 if(el) el.classList.add('hidden');
@@ -396,13 +454,18 @@
             document.querySelectorAll('#cs-nav .sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 'cs-' + m));
             const conv = document.getElementById('converter-view');
             const regex = document.getElementById('regex-view');
+            const sys = document.getElementById('cs-systems-view');
+
             if(m === 'regex') {
-                if(conv) conv.classList.add('hidden');
-                if(regex) regex.classList.remove('hidden');
+                [conv, sys].forEach(el => el && el.classList.add('hidden'));
+                regex.classList.remove('hidden');
                 window.initRegexLab();
+            } else if(m === 'systems') {
+                [conv, regex].forEach(el => el && el.classList.add('hidden'));
+                sys.classList.remove('hidden');
             } else {
-                if(regex) regex.classList.add('hidden');
-                if(conv) conv.classList.remove('hidden');
+                [regex, sys].forEach(el => el && el.classList.add('hidden'));
+                conv.classList.remove('hidden');
                 window.fillDims('cs');
             }
         };
@@ -472,6 +535,115 @@
                 }
             }
         };
+
+        // --- CS SYSTEMS ENGINE (NEW) ---
+        window.runSystemConversion = function() {
+            const input = document.getElementById('sys-input').value.trim();
+            const from = document.getElementById('sys-from').value;
+            const container = document.getElementById('sys-results');
+            if(!input) { container.innerHTML = '<div class="text-slate-500 text-center italic py-10">ابدأ الكتابة للتحليل...</div>'; return; }
+
+            let decimalValue;
+            try {
+                if (from === 'ascii') {
+                    decimalValue = input.split('').map(c => c.charCodeAt(0)).join(' '); 
+                } else if (from === 'roman') {
+                    decimalValue = romanToDecimal(input.toUpperCase());
+                } else if (from === 'bcd') {
+                    decimalValue = parseInt(input, 2); // Simplified
+                } else if (from === 'gray') {
+                    decimalValue = grayToBinary(input);
+                } else {
+                    decimalValue = parseInt(input, parseInt(from));
+                }
+            } catch(e) { decimalValue = NaN; }
+
+            if(isNaN(decimalValue) && from !== 'ascii') {
+                container.innerHTML = '<div class="text-red-400 text-center font-black py-10">❌ قيمة غير صالحة للنظام المختار</div>';
+                return;
+            }
+
+            const dec = (from === 'ascii') ? 0 : decimalValue;
+            
+            // Generate Results
+            let html = '<div class="space-y-3">';
+            
+            const addRes = (title, val) => {
+                html += `<div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center group">
+                            <span class="text-slate-400 text-[10px] font-bold">${title}</span>
+                            <span class="text-white font-mono font-bold break-all ml-4">${val}</span>
+                         </div>`;
+            };
+
+            if (from !== 'ascii') {
+                addRes("Decimal (Base 10)", dec);
+                addRes("Binary (Base 2)", dec.toString(2));
+                addRes("Octal (Base 8)", dec.toString(8));
+                addRes("Hex (Base 16)", dec.toString(16).toUpperCase());
+                addRes("Unary", "1".repeat(Math.min(dec, 50)) + (dec > 50 ? "..." : ""));
+                addRes("Ternary (Base 3)", dec.toString(3));
+                addRes("Base 32", dec.toString(32).toUpperCase());
+                addRes("Base 36", dec.toString(36).toUpperCase());
+                addRes("Base 64", btoa(dec.toString()));
+                
+                // Signed Representation (8-bit)
+                let b8 = (dec & 0xFF).toString(2).padStart(8, '0');
+                addRes("Sign-Magnitude (8-bit)", (dec < 0 ? '1' : '0') + Math.abs(dec).toString(2).padStart(7, '0'));
+                addRes("1's Complement (8-bit)", b8.split('').map(b => b === '0' ? '1' : '0').join(''));
+                addRes("2's Complement (8-bit)", ((~dec + 1) & 0xFF).toString(2).padStart(8, '0'));
+                
+                // IEEE 754
+                const getIEEE = (val, type) => {
+                    let buf = new ArrayBuffer(type === 32 ? 4 : 8);
+                    let view = new DataView(buf);
+                    if(type === 32) view.setFloat32(0, val); else view.setFloat64(0, val);
+                    let res = "";
+                    for(let i=0; i<buf.byteLength; i++) res += view.getUint8(i).toString(2).padStart(8, '0');
+                    return res;
+                };
+                addRes("IEEE 754 Single (32-bit)", getIEEE(dec, 32));
+                addRes("IEEE 754 Double (64-bit)", getIEEE(dec, 64));
+                
+                // Roman
+                addRes("Roman Numeral", decimalToRoman(dec));
+                
+                // Codes
+                addRes("Gray Code", ((dec ^ (dec >> 1)) >>> 0).toString(2));
+                addRes("Excess-3", (dec + 3).toString(2));
+            } else {
+                addRes("ASCII / UTF-8", input.split('').map(c => c.charCodeAt(0)).join(' '));
+                addRes("Binary Stream", input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '));
+                addRes("Hex Stream", input.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase()).join(' '));
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        };
+
+        function decimalToRoman(num) {
+            if(num <= 0 || num > 3999) return "N/A";
+            const map = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+            let res = '';
+            for(let i in map) { while(num >= map[i]) { res += i; num -= map[i]; } }
+            return res;
+        }
+
+        function romanToDecimal(str) {
+            const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+            let res = 0;
+            for(let i=0; i<str.length; i++) {
+                let v1 = map[str[i]], v2 = map[str[i+1]];
+                if(v2 > v1) { res += (v2 - v1); i++; } else { res += v1; }
+            }
+            return res;
+        }
+
+        function grayToBinary(gray) {
+            let n = parseInt(gray, 2);
+            let mask = n >> 1;
+            while (mask !== 0) { n = n ^ mask; mask = mask >> 1; }
+            return n;
+        }
 
         window.swapUnits = function() {
             const f = document.getElementById('unit-from');
