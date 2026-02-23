@@ -46,9 +46,6 @@
         @keyframes explodeFlash { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(500); opacity: 1; } 100% { transform: scale(1000); opacity: 0; } }
         .exploding { animation: explodeFlash 0.8s ease-out forwards; }
 
-        #matrix-canvas { display: none; position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .tech-mode #matrix-canvas { display: block; }
-
         .regex-highlighter { line-height: 1.625; font-family: 'Fira Code', monospace; pointer-events: none; white-space: pre-wrap; word-break: break-all; }
         .regex-match { background: rgba(59, 130, 246, 0.3); border-bottom: 2px solid var(--ai-blue); border-radius: 2px; }
         .option-card { cursor: pointer; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: all 0.2s; }
@@ -57,6 +54,8 @@
         .calc-display { background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 1.5rem; text-align: left; font-size: 2rem; margin-bottom: 1rem; border: 1px solid var(--border-color); }
         .calc-btn { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 1rem; transition: all 0.2s; font-weight: bold; }
         .calc-btn:hover { background: rgba(255,255,255,0.15); }
+
+        #ai-chat-window { display: none; position: fixed; bottom: 100px; right: 24px; width: 350px; height: 500px; background: rgba(10,10,10,0.95); border: 2px solid var(--ai-blue); border-radius: 2rem; z-index: 8000; flex-direction: column; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -119,9 +118,9 @@
                     <div onclick="window.setPortal('home')" id="nav-home" class="nav-link active">🏠 الرئيسية</div>
                     <div onclick="window.setPortal('general')" id="nav-general" class="nav-link">🌍 العام</div>
                     <div onclick="window.setPortal('secondary')" id="nav-secondary" class="nav-link">🎓 ثانوية عامة</div>
-                    <div onclick="setPortal('engineering')" id="nav-engineering" class="nav-link">⚙️ الهندسة</div>
-                    <div onclick="setPortal('cs')" id="nav-cs" class="nav-link text-center">💾 الحاسبات</div>
-                    <div onclick="setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link text-center">🧮 Ultr Gen Calc</div>
+                    <div onclick="window.setPortal('engineering')" id="nav-engineering" class="nav-link">⚙️ الهندسة</div>
+                    <div onclick="window.setPortal('cs')" id="nav-cs" class="nav-link text-center">💾 الحاسبات</div>
+                    <div onclick="window.setPortal('ultra_calc')" id="nav-ultra_calc" class="nav-link text-center">🧮 Ultr Gen Calc</div>
                 </nav>
             </div>
         </header>
@@ -195,15 +194,35 @@
                     </div>
                 </div>
 
-                <!-- الآلة الحاسبة -->
+                <!-- الآلة الحاسبة المتطورة -->
                 <div id="ultra-calc-view" class="hidden space-y-8 animate-fade text-right">
-                    <div class="calc-display text-yellow-400 font-mono" id="calc-screen">0</div>
-                    <div class="grid grid-cols-4 md:grid-cols-5 gap-3">
-                        <button onclick="window.calcIn('sin(')" class="calc-btn">sin</button><button onclick="window.calcIn('cos(')" class="calc-btn">cos</button><button onclick="window.calcIn('tan(')" class="calc-btn">tan</button><button onclick="window.calcAC()" class="calc-btn text-red-400 font-bold">AC</button><button onclick="window.calcDel()" class="calc-btn font-bold">⌫</button>
-                        <button onclick="window.calcIn('7')" class="calc-btn">7</button><button onclick="window.calcIn('8')" class="calc-btn">8</button><button onclick="window.calcIn('9')" class="calc-btn">9</button><button onclick="window.calcIn('/')" class="calc-btn">÷</button><button onclick="window.calcIn('log(')" class="calc-btn">log</button>
-                        <button onclick="window.calcIn('4')" class="calc-btn">4</button><button onclick="window.calcIn('5')" class="calc-btn">5</button><button onclick="window.calcIn('6')" class="calc-btn">6</button><button onclick="window.calcIn('*')" class="calc-btn">×</button><button onclick="window.calcIn('sqrt(')" class="calc-btn">√</button>
-                        <button onclick="window.calcIn('1')" class="calc-btn">1</button><button onclick="window.calcIn('2')" class="calc-btn">2</button><button onclick="window.calcIn('3')" class="calc-btn">3</button><button onclick="window.calcIn('-')" class="calc-btn">-</button><button onclick="window.calcIn('^')" class="calc-btn">xʸ</button>
-                        <button onclick="window.calcIn('0')" class="calc-btn">0</button><button onclick="window.calcIn('.')" class="calc-btn">.</button><button onclick="window.calcRes()" class="calc-btn bg-yellow-400 text-black font-bold">=</button><button onclick="window.calcIn('+')" class="calc-btn">+</button><button onclick="window.calcIn('pi')" class="calc-btn">π</button>
+                    <nav class="flex gap-4 border-b border-white/5 pb-2">
+                        <button onclick="window.setCalcMode('basic')" id="cm-basic" class="calc-tab-btn active text-yellow-400 font-bold border-b-2 border-yellow-400 pb-1">الحسابي</button>
+                        <button onclick="window.setCalcMode('algebra')" id="cm-algebra" class="calc-tab-btn text-slate-500 font-bold">الجبري</button>
+                        <button onclick="window.setCalcMode('graph')" id="cm-graph" class="calc-tab-btn text-slate-500 font-bold">الرسم 3D</button>
+                    </nav>
+
+                    <div id="calc-pane-basic" class="calc-pane space-y-4">
+                        <div class="calc-display text-yellow-400 font-mono" id="calc-screen">0</div>
+                        <div class="grid grid-cols-4 md:grid-cols-5 gap-3">
+                            <button onclick="window.calcIn('sin(')" class="calc-btn">sin</button><button onclick="window.calcIn('cos(')" class="calc-btn">cos</button><button onclick="window.calcIn('tan(')" class="calc-btn">tan</button><button onclick="window.calcAC()" class="calc-btn text-red-400 font-bold">AC</button><button onclick="window.calcDel()" class="calc-btn font-bold">⌫</button>
+                            <button onclick="window.calcIn('7')" class="calc-btn">7</button><button onclick="window.calcIn('8')" class="calc-btn">8</button><button onclick="window.calcIn('9')" class="calc-btn">9</button><button onclick="window.calcIn('/')" class="calc-btn">÷</button><button onclick="window.calcIn('log(')" class="calc-btn">log</button>
+                            <button onclick="window.calcIn('4')" class="calc-btn">4</button><button onclick="window.calcIn('5')" class="calc-btn">5</button><button onclick="window.calcIn('6')" class="calc-btn">6</button><button onclick="window.calcIn('*')" class="calc-btn">×</button><button onclick="window.calcIn('sqrt(')" class="calc-btn">√</button>
+                            <button onclick="window.calcIn('1')" class="calc-btn">1</button><button onclick="window.calcIn('2')" class="calc-btn">2</button><button onclick="window.calcIn('3')" class="calc-btn">3</button><button onclick="window.calcIn('-')" class="calc-btn">-</button><button onclick="window.calcIn('^')" class="calc-btn">xʸ</button>
+                            <button onclick="window.calcIn('0')" class="calc-btn">0</button><button onclick="window.calcIn('.')" class="calc-btn">.</button><button onclick="window.calcRes()" class="calc-btn bg-yellow-400 text-black font-bold">=</button><button onclick="window.calcIn('+')" class="calc-btn">+</button><button onclick="window.calcIn('pi')" class="calc-btn">π</button>
+                        </div>
+                    </div>
+
+                    <div id="calc-pane-algebra" class="calc-pane hidden space-y-4">
+                        <input type="text" id="alg-input" placeholder="أدخل المعادلة (مثال: x^2 - 4 = 0)" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 font-bold text-center">
+                        <button onclick="window.solveAlgebra()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl shadow-lg">حل المعادلة 🔍</button>
+                        <div id="alg-result" class="p-6 bg-black/40 rounded-xl border border-white/5 text-yellow-400 font-mono text-center min-h-[100px] flex items-center justify-center">النتيجة ستظهر هنا</div>
+                    </div>
+
+                    <div id="calc-pane-graph" class="calc-pane hidden space-y-4">
+                        <input type="text" id="graph-input" value="sin(sqrt(x^2+y^2))" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 font-bold text-center">
+                        <button onclick="window.draw3DGraph()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg">توليد الرسم البياني 🌐</button>
+                        <div id="graph-plot-area" class="w-full h-[400px] rounded-xl overflow-hidden bg-black/20"></div>
                     </div>
                 </div>
 
@@ -234,11 +253,26 @@
                     <div class="text-[11px] text-slate-400 space-y-4 font-bold">
                         <p>• كافة الوحدات الفيزيائية والبرمجية تم ضبطها بدقة 100%.</p>
                         <p>• النظام يعمل محلياً بالكامل لضمان الخصوصية والسرعة.</p>
-                        <p>• تم تفعيل نظام التخزين المحلي التلقائي لبياناتك.</p>
+                        <p>• تم تفعيل المحركات الجبرية والبيانية المتطورة.</p>
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- AI Chat Window -->
+    <div id="ai-chat-window">
+        <div class="p-6 border-b border-white/5 flex justify-between items-center">
+            <h4 class="text-blue-400 font-black text-sm uppercase tracking-widest">مِعيار AI Guide</h4>
+            <button onclick="window.toggleAIChat(false)" class="text-slate-500 hover:text-white">✕</button>
+        </div>
+        <div id="chat-content" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+            <div class="bg-white/5 p-3 rounded-2xl rounded-tr-none border border-white/10 text-slate-300">أهلاً بك يا بطل! أنا مِعيار AI، دليلك في هذه المنصة. كيف يمكنني مساعدتك في حساباتك اليوم؟</div>
+        </div>
+        <div class="p-4 border-t border-white/5 flex gap-2">
+            <input type="text" id="chat-input" placeholder="اسألني عن التحويلات..." class="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-blue-400">
+            <button onclick="window.sendChatMessage()" class="bg-blue-600 p-3 rounded-xl">🚀</button>
+        </div>
     </div>
 
     <!-- Modals -->
@@ -255,6 +289,10 @@
         </div>
     </div>
 
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-4">
+        <button onclick="window.toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">🤖</button>
+    </div>
+
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl opacity-0 transition-opacity pointer-events-none z-[8000]">تم التنفيذ ✅</div>
 
     <script>
@@ -263,7 +301,7 @@
         window.historyData = [];
         window.currentAuthMode = 'login';
 
-        // --- UNITS DATABASE ---
+        // --- UNITS DATABASE (EXPANDED) ---
         const unitsDB = {
             length_all: { label: "الطول والمسافات 📏", units: [
                 {n:"أنجستروم (Å)", s:"ang", f:1e-10}, {n:"نانومتر (nm)", s:"nm", f:1e-9}, {n:"ميكرومتر (μm)", s:"um", f:1e-6},
@@ -275,42 +313,48 @@
                 {n:"مليجرام (mg)", s:"mg", f:1e-6}, {n:"جرام (g)", s:"g", f:0.001}, {n:"كيلوجرام (kg)", s:"kg", f:1}, 
                 {n:"طن (ton)", s:"ton", f:1000}, {n:"رطل (lb)", s:"lb", f:0.453}
             ]},
-            elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}]},
-            elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}]},
-            elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}]},
-            data_storage: { label: "وحدات التخزين 💾", units: [{n:"Byte (B)", s:"B", f:1}, {n:"KB", s:"KB", f:1024}, {n:"MB", s:"MB", f:1024**2}, {n:"GB", s:"GB", f:1024**3}]}
+            elec_current: { label: "شدة التيار ⚡", units: [{n:"أمبير (A)", s:"A", f:1}, {n:"ملي أمبير (mA)", s:"mA", f:0.001}, {n:"ميكرو أمبير", s:"uA", f:1e-6}]},
+            elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت", s:"mV", f:1e-3}]},
+            elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجا أوم", s:"MO", f:1e6}]},
+            data_storage: { label: "وحدات التخزين 💾", units: [{n:"Byte (B)", s:"B", f:1}, {n:"KB", s:"KB", f:1024}, {n:"MB", s:"MB", f:1024**2}, {n:"GB", s:"GB", f:1024**3}, {n:"TB", s:"TB", f:1024**4}]},
+            pressure: { label: "الضغط 🌪️", units: [{n:"Pascal (Pa)", s:"Pa", f:1}, {n:"Bar", s:"bar", f:1e5}, {n:"ATM", s:"atm", f:101325}, {n:"PSI", s:"psi", f:6894.76}]},
+            energy: { label: "الطاقة والشغل 💥", units: [{n:"Joule (J)", s:"J", f:1}, {n:"Calories", s:"cal", f:4.184}, {n:"Kilo-Watt Hour", s:"kWh", f:3.6e6}, {n:"EV", s:"eV", f:1.602e-19}]},
+            speed: { label: "السرعة 🏎️", units: [{n:"m/s", s:"ms", f:1}, {n:"km/h", s:"kmh", f:0.2777}, {n:"Mile/h", s:"mph", f:0.447}, {n:"Knot", s:"knot", f:0.5144}]}
         };
 
         const portalData = {
             home: { dims: [] },
-            general: { dims: ['length_all', 'mass_all'] },
-            secondary: { dims: ['length_all', 'mass_all', 'elec_current', 'elec_voltage', 'elec_res'] },
-            engineering: { dims: ['length_all', 'elec_res'] },
+            general: { dims: ['length_all', 'mass_all', 'speed', 'pressure'] },
+            secondary: { dims: ['length_all', 'mass_all', 'elec_current', 'elec_voltage', 'elec_res', 'energy'] },
+            engineering: { dims: ['length_all', 'elec_res', 'pressure'] },
             cs: { dims: ['data_storage'] },
             ultra_calc: { dims: [] }
         };
 
         // --- LOCAL STORAGE CORE ---
         window.saveLocal = function() {
-            if(window.userData) localStorage.setItem('mayar_user_data', JSON.stringify(window.userData));
-            localStorage.setItem('mayar_history_data', JSON.stringify(window.historyData));
+            if(window.userData) localStorage.setItem('mayar_user_data_v2', JSON.stringify(window.userData));
+            localStorage.setItem('mayar_history_data_v2', JSON.stringify(window.historyData));
         };
 
         window.loadLocal = function() {
-            const savedUser = localStorage.getItem('mayar_user_data');
-            const savedHistory = localStorage.getItem('mayar_history_data');
+            const savedUser = localStorage.getItem('mayar_user_data_v2');
+            const savedHistory = localStorage.getItem('mayar_history_data_v2');
             if(savedUser) window.userData = JSON.parse(savedUser);
             if(savedHistory) window.historyData = JSON.parse(savedHistory);
         };
 
-        // --- UI CORE FUNCTIONS ---
+        // --- UI NAVIGATION FUNCTIONS ---
         window.setPortal = function(key) {
             window.currentPortalKey = key;
             document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
             
             const views = ['home-view', 'converter-view', 'regex-view', 'ultra-calc-view', 'secondary-nav', 'cs-nav', 'quiz-view'];
-            views.forEach(v => { if(document.getElementById(v)) document.getElementById(v).classList.add('hidden'); });
-
+            views.forEach(v => {
+                const el = document.getElementById(v);
+                if(el) el.classList.add('hidden');
+            });
+            
             if(key === 'home') {
                 document.getElementById('home-view').classList.remove('hidden');
                 window.init3D();
@@ -322,6 +366,7 @@
                 window.setCSMode('units');
             } else if(key === 'ultra_calc') {
                 document.getElementById('ultra-calc-view').classList.remove('hidden');
+                window.setCalcMode('basic');
             } else {
                 document.getElementById('converter-view').classList.remove('hidden');
                 window.fillDims(key);
@@ -360,6 +405,19 @@
                 if(conv) conv.classList.remove('hidden');
                 window.fillDims('cs');
             }
+        };
+
+        window.setCalcMode = function(mode) {
+            document.querySelectorAll('.calc-tab-btn').forEach(b => {
+                b.classList.remove('active', 'text-yellow-400', 'border-b-2', 'border-yellow-400');
+                b.classList.add('text-slate-500');
+            });
+            const activeTab = document.getElementById('cm-' + mode);
+            activeTab.classList.add('active', 'text-yellow-400', 'border-b-2', 'border-yellow-400');
+            activeTab.classList.remove('text-slate-500');
+
+            document.querySelectorAll('.calc-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById('calc-pane-' + mode).classList.remove('hidden');
         };
 
         window.fillDims = function(portalKey) {
@@ -431,6 +489,40 @@
             if(list) list.innerHTML = window.historyData.map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 text-center font-mono animate-fade">${h}</div>`).join('') || '<p class="text-slate-600 italic text-center text-xs">لا يوجد تحويلات مسجلة</p>';
         };
 
+        // --- ALGEBRA & GRAPHING ---
+        window.solveAlgebra = function() {
+            const input = document.getElementById('alg-input').value;
+            const resultDiv = document.getElementById('alg-result');
+            if(!input) return;
+            try {
+                const solution = nerdamer.solveEquations(input);
+                resultDiv.innerHTML = `<span class='text-white font-black'>Solutions:</span><br>${solution.toString()}`;
+            } catch(e) {
+                resultDiv.innerText = "خطأ في صياغة المعادلة. تأكد من استخدام المتغيرات x, y.";
+            }
+        };
+
+        window.draw3DGraph = function() {
+            const expr = document.getElementById('graph-input').value;
+            const plotArea = document.getElementById('graph-plot-area');
+            try {
+                const x = math.range(-10, 10, 0.5).toArray();
+                const y = math.range(-10, 10, 0.5).toArray();
+                const z = x.map(xv => y.map(yv => {
+                    try { return math.evaluate(expr, {x: xv, y: yv}); } catch { return 0; }
+                }));
+
+                const data = [{ z: z, x: x, y: y, type: 'surface', colorscale: 'Viridis' }];
+                const layout = { 
+                    paper_bgcolor: 'rgba(0,0,0,0)', 
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#ffffff' },
+                    margin: { l: 0, r: 0, b: 0, t: 0 }
+                };
+                Plotly.newPlot(plotArea, data, layout);
+            } catch(e) { window.showToast("خطأ في رسم الدالة ❌"); }
+        };
+
         // --- REGEX ENGINE ---
         window.initRegexLab = function() {
             const patternInput = document.getElementById('regex-pattern-input');
@@ -453,6 +545,28 @@
             testArea.oninput = update;
             testArea.onscroll = () => backdrop.scrollTop = testArea.scrollTop;
             update();
+        };
+
+        // --- AI CHAT LOGIC ---
+        window.toggleAIChat = (s) => document.getElementById('ai-chat-window').style.display = s ? 'flex' : 'none';
+        window.sendChatMessage = () => {
+            const input = document.getElementById('chat-input');
+            const content = document.getElementById('chat-content');
+            if(!input.value) return;
+            
+            const userMsg = document.createElement('div');
+            userMsg.className = "bg-blue-600/20 p-3 rounded-2xl rounded-tl-none border border-blue-500/20 text-white self-start ml-auto max-w-[80%]";
+            userMsg.innerText = input.value;
+            content.appendChild(userMsg);
+
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "bg-white/5 p-3 rounded-2xl rounded-tr-none border border-white/10 text-slate-300 self-end mr-auto max-w-[80%]";
+                aiMsg.innerText = "فهمت استفسارك. جاري تحليل البيانات الهندسية للرد عليك...";
+                content.appendChild(aiMsg);
+                content.scrollTop = content.scrollHeight;
+            }, 600);
+            input.value = "";
         };
 
         // --- AUTH & ACCOUNT ---
@@ -481,7 +595,7 @@
             window.setPortal('home');
         };
 
-        window.logout = () => { localStorage.removeItem('mayar_user_data'); location.reload(); };
+        window.logout = () => { localStorage.removeItem('mayar_user_data_v2'); location.reload(); };
 
         window.uploadProfilePic = (e) => {
             const file = e.target.files[0];
@@ -520,7 +634,7 @@
         window.startQuiz = function() {
             const pool = [
                 {q: "وحدة قياس فرق الجهد؟", o: ["أمبير", "فولت", "أوم", "وات"], a: 1},
-                {q: "قانون أوم يربط بين؟", o: ["الكتلة والسرعة", "الجهد والتيار", "القوة والزمن", "الشحنة والمسافة"], a: 1},
+                {q: "قانون أوم يربط بين؟", o: ["الكتلة والسرعة", "الجهد التيار", "القوة والزمن", "الشحنة والمسافة"], a: 1},
                 {q: "أسرع وسيلة لنقل البيانات؟", o: ["الألياف الضوئية", "الأسلاك النحاسية", "الأقمار الصناعية", "البريد"], a: 0}
             ];
             document.getElementById('quiz-intro').classList.add('hidden');
