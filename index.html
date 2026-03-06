@@ -61,6 +61,33 @@
         .cs-systems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
         .cs-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.5rem; padding: 1.5rem; transition: all 0.3s; }
         .cs-card:hover { border-color: var(--ai-blue); background: rgba(59, 130, 246, 0.05); }
+
+        /* تعديل خاص لظهور الاختيارات بشكل دائم وواضح في القوائم */
+        select option {
+            background-color: #121212 !important; 
+            color: white !important; 
+            padding: 10px;
+        }
+        select:focus {
+            border-color: var(--primary-yellow) !important;
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+        }
+
+        /* تنسيقات أيقونة المالك الجديدة */
+        .owner-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-yellow);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .owner-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            border-color: #fff;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -87,7 +114,11 @@
             </div>
             <form id="auth-form" class="space-y-4">
                 <div id="signup-fields" class="hidden space-y-4">
-                    <input type="text" id="reg-name" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold" placeholder="الاسم الكامل">
+                    <input type="text" id="reg-name" 
+                           oninput="this.value = this.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, '')"
+                           class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold" 
+                           placeholder="الاسم الكامل">
+                    
                     <select id="reg-study" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center font-bold">
                         <option value="هندسة">هندسة</option>
                         <option value="حاسبات">حاسبات</option>
@@ -95,7 +126,11 @@
                         <option value="ثانوية عامة">ثانوية عامة</option>
                     </select>
                 </div>
-                <input type="tel" id="auth-phone" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-mono outline-none focus:border-yellow-400 text-center" placeholder="رقم الهاتف">
+                <input type="tel" id="auth-phone" required maxlength="11"
+                       oninput="this.value = this.value.replace(/\D/g, '')"
+                       class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-mono outline-none focus:border-yellow-400 text-center" 
+                       placeholder="رقم الهاتف">
+                
                 <input type="password" id="auth-password" required class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-yellow-400 text-center" placeholder="كلمة المرور">
                 <button type="submit" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all shadow-lg text-xs tracking-widest">Initialize Global System 🧬</button>
             </form>
@@ -220,7 +255,6 @@
                             <div class="space-y-4">
                                 <label class="text-xs font-bold text-slate-500">المعالج الذكي - النتائج التفصيلية</label>
                                 <div id="sys-results" class="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                    <!-- Results dynamically filled -->
                                     <div class="text-slate-500 text-center italic py-10">ابدأ الكتابة للتحليل...</div>
                                 </div>
                             </div>
@@ -335,7 +369,48 @@
         </div>
     </div>
 
-    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-4">
+    <!-- نافذة المالك (الجديدة) -->
+    <div id="owner-modal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl hidden items-center justify-center p-6 z-[9000]" onclick="window.toggleOwnerModal(false)">
+        <div class="glass-card rounded-[3.5rem] p-12 max-w-sm w-full text-center border-2 border-yellow-400 shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="window.toggleOwnerModal(false)" class="absolute top-6 left-6 text-slate-400 hover:text-white">✕</button>
+            <div class="w-40 h-40 mx-auto mb-6 rounded-full border-4 border-yellow-400 overflow-hidden shadow-2xl">
+                <img src="Ahmedim9" alt="أحمد الشاذلي" class="w-full h-full object-cover">
+            </div>
+            <p class="text-yellow-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Owner of the Platform</p>
+            <h2 class="text-4xl font-black text-white mb-6 ruqaa-font">أحمد الشاذلي</h2>
+            
+            <div class="space-y-4 mb-10 text-right">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <p class="text-[10px] text-slate-500 font-bold mb-1">البريد الإلكتروني</p>
+                    <p class="text-sm font-mono text-white">ahmadelshazlia@gmail.com</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <p class="text-[10px] text-slate-500 font-bold mb-1">رقم التواصل</p>
+                    <p class="text-sm font-mono text-white tracking-widest">+20 01XXXXXXXXX</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-6">
+                <a href="#" class="text-slate-400 hover:text-blue-500 transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="#" class="text-slate-400 hover:text-pink-500 transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-1.13-.32-2.38-.2-3.37.42-.99.62-1.64 1.72-1.68 2.9-.03.82.25 1.65.77 2.27.67.81 1.68 1.28 2.72 1.26 1.05-.02 2.05-.53 2.68-1.39.56-.76.81-1.72.81-2.67.01-4.71-.01-9.42-.02-14.13z"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- الأزرار العائمة بالأسفل -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-4 items-center">
+        <!-- أيقونة المالك -->
+        <div onclick="window.toggleOwnerModal(true)" class="owner-btn">
+            <img src="Ahmedim9" class="w-full h-full object-cover" alt="Owner">
+        </div>
+        <!-- أيقونة الذكاء الاصطناعي -->
         <button onclick="window.toggleAIChat(true)" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">🤖</button>
     </div>
 
@@ -363,17 +438,10 @@
             elec_voltage: { label: "فرق الجهد 🔋", units: [{n:"فولت (V)", s:"V", f:1}, {n:"كيلو فولت (kV)", s:"kV", f:1e3}, {n:"ملي فولت", s:"mV", f:1e-3}]},
             elec_res: { label: "المقاومة 🔌", units: [{n:"أوم (Ω)", s:"Ω", f:1}, {n:"كيلو أوم (kΩ)", s:"kΩ", f:1e3}, {n:"ميجا أوم", s:"MO", f:1e6}]},
             data_storage: { label: "وحدات التخزين 💾", units: [
-                {n:"bit", s:"bit", f:0.125},
-                {n:"nibble", s:"nib", f:0.5},
-                {n:"byte", s:"B", f:1},
-                {n:"KB", s:"KB", f:1024},
-                {n:"MB", s:"MB", f:1024**2},
-                {n:"GB", s:"GB", f:1024**3},
-                {n:"TB", s:"TB", f:1024**4},
-                {n:"PB", s:"PB", f:1024**5},
-                {n:"EB", s:"EB", f:1024**6},
-                {n:"ZB", s:"ZB", f:1024**7},
-                {n:"YB", s:"YB", f:1024**8}
+                {n:"bit", s:"bit", f:0.125}, {n:"nibble", s:"nib", f:0.5}, {n:"byte", s:"B", f:1},
+                {n:"KB", s:"KB", f:1024}, {n:"MB", s:"MB", f:1024**2}, {n:"GB", s:"GB", f:1024**3},
+                {n:"TB", s:"TB", f:1024**4}, {n:"PB", s:"PB", f:1024**5}, {n:"EB", s:"EB", f:1024**6},
+                {n:"ZB", s:"ZB", f:1024**7}, {n:"YB", s:"YB", f:1024**8}
             ]},
             pressure: { label: "الضغط 🌪️", units: [{n:"Pascal (Pa)", s:"Pa", f:1}, {n:"Bar", s:"bar", f:1e5}, {n:"ATM", s:"atm", f:101325}, {n:"PSI", s:"psi", f:6894.76}]},
             energy: { label: "الطاقة والشغل 💥", units: [{n:"Joule (J)", s:"J", f:1}, {n:"Calories", s:"cal", f:4.184}, {n:"Kilo-Watt Hour", s:"kWh", f:3.6e6}, {n:"EV", s:"eV", f:1.602e-19}]},
@@ -406,12 +474,8 @@
         window.setPortal = function(key) {
             window.currentPortalKey = key;
             document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.id === 'nav-' + key));
-            
             const views = ['home-view', 'converter-view', 'regex-view', 'ultra-calc-view', 'secondary-nav', 'cs-nav', 'quiz-view', 'cs-systems-view'];
-            views.forEach(v => {
-                const el = document.getElementById(v);
-                if(el) el.classList.add('hidden');
-            });
+            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
             
             if(key === 'home') {
                 document.getElementById('home-view').classList.remove('hidden');
@@ -435,7 +499,6 @@
             document.querySelectorAll('#secondary-nav .sub-nav-btn').forEach(b => b.classList.toggle('active', b.id === 's-' + m));
             const conv = document.getElementById('converter-view');
             const quiz = document.getElementById('quiz-view');
-            
             if(m === 'quiz') {
                 if(conv) conv.classList.add('hidden');
                 if(quiz) quiz.classList.remove('hidden');
@@ -443,10 +506,7 @@
                 if(quiz) quiz.classList.add('hidden');
                 if(conv) conv.classList.remove('hidden');
                 window.fillDims('secondary');
-                if(m === 'electricity') {
-                    const ds = document.getElementById('dimension-select');
-                    if(ds) { ds.value = 'elec_current'; window.loadUnits(); }
-                }
+                if(m === 'electricity') { const ds = document.getElementById('dimension-select'); if(ds) { ds.value = 'elec_current'; window.loadUnits(); } }
             }
         };
 
@@ -455,7 +515,6 @@
             const conv = document.getElementById('converter-view');
             const regex = document.getElementById('regex-view');
             const sys = document.getElementById('cs-systems-view');
-
             if(m === 'regex') {
                 [conv, sys].forEach(el => el && el.classList.add('hidden'));
                 regex.classList.remove('hidden');
@@ -478,7 +537,6 @@
             const activeTab = document.getElementById('cm-' + mode);
             activeTab.classList.add('active', 'text-yellow-400', 'border-b-2', 'border-yellow-400');
             activeTab.classList.remove('text-slate-500');
-
             document.querySelectorAll('.calc-pane').forEach(p => p.classList.add('hidden'));
             document.getElementById('calc-pane-' + mode).classList.remove('hidden');
         };
@@ -514,17 +572,13 @@
             const uFrom = document.getElementById('unit-from');
             const uTo = document.getElementById('unit-to');
             const outVal = document.getElementById('output-val');
-            
             if(!ds || !valInput || !uFrom || !uTo || !outVal || !ds.value) return;
-            
             const dim = ds.value;
             const val = parseFloat(valInput.value) || 0;
             const uF = unitsDB[dim].units.find(u => u.s === uFrom.value);
             const uT = unitsDB[dim].units.find(u => u.s === uTo.value);
-            
             const res = (val * uF.f) / uT.f;
             outVal.innerText = res.toLocaleString();
-            
             if(val !== 0) {
                 const log = `${val} ${uF.s} = ${res.toFixed(4)} ${uT.s}`;
                 if(!window.historyData.includes(log)) {
@@ -536,45 +590,28 @@
             }
         };
 
-        // --- CS SYSTEMS ENGINE (NEW) ---
         window.runSystemConversion = function() {
             const input = document.getElementById('sys-input').value.trim();
             const from = document.getElementById('sys-from').value;
             const container = document.getElementById('sys-results');
             if(!input) { container.innerHTML = '<div class="text-slate-500 text-center italic py-10">ابدأ الكتابة للتحليل...</div>'; return; }
-
             let decimalValue;
             try {
-                if (from === 'ascii') {
-                    decimalValue = input.split('').map(c => c.charCodeAt(0)).join(' '); 
-                } else if (from === 'roman') {
-                    decimalValue = romanToDecimal(input.toUpperCase());
-                } else if (from === 'bcd') {
-                    decimalValue = parseInt(input, 2); // Simplified
-                } else if (from === 'gray') {
-                    decimalValue = grayToBinary(input);
-                } else {
-                    decimalValue = parseInt(input, parseInt(from));
-                }
+                if (from === 'ascii') decimalValue = input.split('').map(c => c.charCodeAt(0)).join(' '); 
+                else if (from === 'roman') decimalValue = romanToDecimal(input.toUpperCase());
+                else if (from === 'bcd') decimalValue = parseInt(input, 2);
+                else if (from === 'gray') decimalValue = grayToBinary(input);
+                else decimalValue = parseInt(input, parseInt(from));
             } catch(e) { decimalValue = NaN; }
-
-            if(isNaN(decimalValue) && from !== 'ascii') {
-                container.innerHTML = '<div class="text-red-400 text-center font-black py-10">❌ قيمة غير صالحة للنظام المختار</div>';
-                return;
-            }
-
+            if(isNaN(decimalValue) && from !== 'ascii') { container.innerHTML = '<div class="text-red-400 text-center font-black py-10">❌ قيمة غير صالحة للنظام المختار</div>'; return; }
             const dec = (from === 'ascii') ? 0 : decimalValue;
-            
-            // Generate Results
             let html = '<div class="space-y-3">';
-            
             const addRes = (title, val) => {
                 html += `<div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center group">
                             <span class="text-slate-400 text-[10px] font-bold">${title}</span>
                             <span class="text-white font-mono font-bold break-all ml-4">${val}</span>
                          </div>`;
             };
-
             if (from !== 'ascii') {
                 addRes("Decimal (Base 10)", dec);
                 addRes("Binary (Base 2)", dec.toString(2));
@@ -585,14 +622,10 @@
                 addRes("Base 32", dec.toString(32).toUpperCase());
                 addRes("Base 36", dec.toString(36).toUpperCase());
                 addRes("Base 64", btoa(dec.toString()));
-                
-                // Signed Representation (8-bit)
                 let b8 = (dec & 0xFF).toString(2).padStart(8, '0');
                 addRes("Sign-Magnitude (8-bit)", (dec < 0 ? '1' : '0') + Math.abs(dec).toString(2).padStart(7, '0'));
                 addRes("1's Complement (8-bit)", b8.split('').map(b => b === '0' ? '1' : '0').join(''));
                 addRes("2's Complement (8-bit)", ((~dec + 1) & 0xFF).toString(2).padStart(8, '0'));
-                
-                // IEEE 754
                 const getIEEE = (val, type) => {
                     let buf = new ArrayBuffer(type === 32 ? 4 : 8);
                     let view = new DataView(buf);
@@ -603,11 +636,7 @@
                 };
                 addRes("IEEE 754 Single (32-bit)", getIEEE(dec, 32));
                 addRes("IEEE 754 Double (64-bit)", getIEEE(dec, 64));
-                
-                // Roman
                 addRes("Roman Numeral", decimalToRoman(dec));
-                
-                // Codes
                 addRes("Gray Code", ((dec ^ (dec >> 1)) >>> 0).toString(2));
                 addRes("Excess-3", (dec + 3).toString(2));
             } else {
@@ -615,7 +644,6 @@
                 addRes("Binary Stream", input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '));
                 addRes("Hex Stream", input.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase()).join(' '));
             }
-
             html += '</div>';
             container.innerHTML = html;
         };
@@ -648,12 +676,7 @@
         window.swapUnits = function() {
             const f = document.getElementById('unit-from');
             const t = document.getElementById('unit-to');
-            if(f && t) {
-                const temp = f.value;
-                f.value = t.value;
-                t.value = temp;
-                window.runConversion();
-            }
+            if(f && t) { const temp = f.value; f.value = t.value; t.value = temp; window.runConversion(); }
         };
 
         window.renderHistory = function() {
@@ -661,7 +684,6 @@
             if(list) list.innerHTML = window.historyData.map(h => `<div class="bg-white/5 p-3 rounded-xl border border-white/5 text-center font-mono animate-fade">${h}</div>`).join('') || '<p class="text-slate-600 italic text-center text-xs">لا يوجد تحويلات مسجلة</p>';
         };
 
-        // --- ALGEBRA & GRAPHING ---
         window.solveAlgebra = function() {
             const input = document.getElementById('alg-input').value;
             const resultDiv = document.getElementById('alg-result');
@@ -669,9 +691,7 @@
             try {
                 const solution = nerdamer.solveEquations(input);
                 resultDiv.innerHTML = `<span class='text-white font-black'>Solutions:</span><br>${solution.toString()}`;
-            } catch(e) {
-                resultDiv.innerText = "خطأ في صياغة المعادلة. تأكد من استخدام المتغيرات x, y.";
-            }
+            } catch(e) { resultDiv.innerText = "خطأ في صياغة المعادلة. تأكد من استخدام المتغيرات x, y."; }
         };
 
         window.draw3DGraph = function() {
@@ -680,28 +700,18 @@
             try {
                 const x = math.range(-10, 10, 0.5).toArray();
                 const y = math.range(-10, 10, 0.5).toArray();
-                const z = x.map(xv => y.map(yv => {
-                    try { return math.evaluate(expr, {x: xv, y: yv}); } catch { return 0; }
-                }));
-
+                const z = x.map(xv => y.map(yv => { try { return math.evaluate(expr, {x: xv, y: yv}); } catch { return 0; } }));
                 const data = [{ z: z, x: x, y: y, type: 'surface', colorscale: 'Viridis' }];
-                const layout = { 
-                    paper_bgcolor: 'rgba(0,0,0,0)', 
-                    plot_bgcolor: 'rgba(0,0,0,0)',
-                    font: { color: '#ffffff' },
-                    margin: { l: 0, r: 0, b: 0, t: 0 }
-                };
+                const layout = { paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', font: { color: '#ffffff' }, margin: { l: 0, r: 0, b: 0, t: 0 } };
                 Plotly.newPlot(plotArea, data, layout);
             } catch(e) { window.showToast("خطأ في رسم الدالة ❌"); }
         };
 
-        // --- REGEX ENGINE ---
         window.initRegexLab = function() {
             const patternInput = document.getElementById('regex-pattern-input');
             const testArea = document.getElementById('regex-test-area');
             const backdrop = document.getElementById('regex-backdrop-layer');
             if(!patternInput || !testArea || !backdrop) return;
-
             const update = () => {
                 const pat = patternInput.value;
                 const txt = testArea.value;
@@ -713,35 +723,29 @@
                 } catch(e) { backdrop.innerHTML = escapeHtml(txt); }
             };
             function escapeHtml(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-            patternInput.oninput = update;
-            testArea.oninput = update;
+            patternInput.oninput = update; testArea.oninput = update;
             testArea.onscroll = () => backdrop.scrollTop = testArea.scrollTop;
             update();
         };
 
-        // --- AI CHAT LOGIC ---
         window.toggleAIChat = (s) => document.getElementById('ai-chat-window').style.display = s ? 'flex' : 'none';
         window.sendChatMessage = () => {
             const input = document.getElementById('chat-input');
             const content = document.getElementById('chat-content');
             if(!input.value) return;
-            
             const userMsg = document.createElement('div');
             userMsg.className = "bg-blue-600/20 p-3 rounded-2xl rounded-tl-none border border-blue-500/20 text-white self-start ml-auto max-w-[80%]";
             userMsg.innerText = input.value;
             content.appendChild(userMsg);
-
             setTimeout(() => {
                 const aiMsg = document.createElement('div');
                 aiMsg.className = "bg-white/5 p-3 rounded-2xl rounded-tr-none border border-white/10 text-slate-300 self-end mr-auto max-w-[80%]";
                 aiMsg.innerText = "فهمت استفسارك. جاري تحليل البيانات الهندسية للرد عليك...";
-                content.appendChild(aiMsg);
-                content.scrollTop = content.scrollHeight;
+                content.appendChild(aiMsg); content.scrollTop = content.scrollHeight;
             }, 600);
             input.value = "";
         };
 
-        // --- AUTH & ACCOUNT ---
         window.switchAuthTab = function(mode) {
             const loginBtn = document.getElementById('tab-login');
             const signupBtn = document.getElementById('tab-signup');
@@ -763,8 +767,7 @@
                 document.getElementById('header-profile-pic').src = window.userData.profilePic;
                 document.getElementById('modal-profile-pic').src = window.userData.profilePic;
             }
-            window.renderHistory();
-            window.setPortal('home');
+            window.renderHistory(); window.setPortal('home');
         };
 
         window.logout = () => { localStorage.removeItem('mayar_user_data_v2'); location.reload(); };
@@ -772,15 +775,10 @@
         window.uploadProfilePic = (e) => {
             const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onload = (event) => {
-                window.userData.profilePic = event.target.result;
-                window.saveLocal();
-                window.renderApp();
-            };
+            reader.onload = (event) => { window.userData.profilePic = event.target.result; window.saveLocal(); window.renderApp(); };
             reader.readAsDataURL(file);
         };
 
-        // --- 3D ENGINE ---
         let scene, crystal;
         window.init3D = function() {
             if(scene) return;
@@ -801,8 +799,6 @@
             animate();
         };
 
-        // --- QUIZ LOGIC ---
-        window.ansArr = [];
         window.startQuiz = function() {
             const pool = [
                 {q: "وحدة قياس فرق الجهد؟", o: ["أمبير", "فولت", "أوم", "وات"], a: 1},
@@ -813,48 +809,46 @@
             const c = document.getElementById('quiz-container');
             c.classList.remove('hidden'); c.innerHTML = '';
             pool.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = 'glass-card p-6 rounded-2xl mb-4 text-right';
+                const d = document.createElement('div'); d.className = 'glass-card p-6 rounded-2xl mb-4 text-right';
                 d.innerHTML = `<h4 class='font-bold mb-3'>${i + 1}. ${q.q}</h4><div class='grid grid-cols-2 gap-3'>${q.o.map((o, j) => `<div onclick='window.selectOption(${i},${j})' id='q-${i}-o-${j}' class='option-card p-4 rounded-xl text-xs text-center'>${o}</div>`).join('')}</div>`;
                 c.appendChild(d);
             });
-            const b = document.createElement('button');
-            b.className = "w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText = "تصحيح ✅";
-            b.onclick = () => window.finishQuiz(pool);
-            c.appendChild(b);
+            const b = document.createElement('button'); b.className = "w-full bg-yellow-400 text-black font-black py-4 rounded-2xl mt-4"; b.innerText = "تصحيح ✅";
+            b.onclick = () => window.finishQuiz(pool); c.appendChild(b);
             window.ansArr = new Array(pool.length).fill(null);
         };
 
         window.selectOption = (i, j) => {
-            for (let k = 0; k < 4; k++) {
-                const opt = document.getElementById(`q-${i}-o-${k}`);
-                if (opt) opt.classList.remove('selected');
-            }
-            const sel = document.getElementById(`q-${i}-o-${j}`);
-            if (sel) sel.classList.add('selected');
+            for (let k = 0; k < 4; k++) { const opt = document.getElementById(`q-${i}-o-${k}`); if (opt) opt.classList.remove('selected'); }
+            const sel = document.getElementById(`q-${i}-o-${j}`); if (sel) sel.classList.add('selected');
             window.ansArr[i] = j;
         };
 
         window.finishQuiz = (p) => {
-            let s = 0;
-            p.forEach((q, i) => { if (window.ansArr[i] === q.a) s++; });
+            let s = 0; p.forEach((q, i) => { if (window.ansArr[i] === q.a) s++; });
             document.getElementById('quiz-container').classList.add('hidden');
             document.getElementById('quiz-result').classList.remove('hidden');
             document.getElementById('score-text').innerText = `${s} / ${p.length}`;
         };
 
-        window.resetQuiz = () => {
-            document.getElementById('quiz-result').classList.add('hidden');
-            document.getElementById('quiz-intro').classList.remove('hidden');
-        };
+        window.resetQuiz = () => { document.getElementById('quiz-result').classList.add('hidden'); document.getElementById('quiz-intro').classList.remove('hidden'); };
 
-        // --- UTILS ---
         window.calcIn = (v) => { const s = document.getElementById('calc-screen'); if(s.innerText==='0') s.innerText=v; else s.innerText+=v; };
         window.calcAC = () => document.getElementById('calc-screen').innerText='0';
         window.calcDel = () => { const s = document.getElementById('calc-screen'); s.innerText = s.innerText.slice(0,-1) || '0'; };
         window.calcRes = () => { try { document.getElementById('calc-screen').innerText = math.evaluate(document.getElementById('calc-screen').innerText); } catch { document.getElementById('calc-screen').innerText='Error'; } };
         window.toggleAccountModal = (s) => document.getElementById('account-modal').classList.toggle('hidden', !s);
-        window.copyToClipboard = () => { navigator.clipboard.writeText(document.getElementById('output-val').innerText); window.showToast("تم النسخ ✅"); };
+        
+        // وظيفة فتح/غلق نافذة المالك الجديدة
+        window.toggleOwnerModal = (s) => document.getElementById('owner-modal').classList.toggle('hidden', !s);
+
+        window.copyToClipboard = () => { 
+            const textToCopy = document.getElementById('output-val').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy; document.body.appendChild(tempTextArea);
+            tempTextArea.select(); document.execCommand('copy'); document.body.removeChild(tempTextArea);
+            window.showToast("تم النسخ ✅"); 
+        };
         window.showToast = (m) => { const t=document.getElementById('toast'); t.innerText=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); };
         window.triggerFireworkTheme = () => {
             const container = document.getElementById('firework-container');
@@ -863,37 +857,21 @@
             setTimeout(() => { container.style.display = 'none'; }, 1500);
         };
 
-        // --- AUTH FORM ---
         document.getElementById('auth-form').onsubmit = (e) => {
             e.preventDefault();
             const phone = document.getElementById('auth-phone').value;
             if(window.currentAuthMode === 'signup') {
-                window.userData = {
-                    name: document.getElementById('reg-name').value,
-                    phone: phone,
-                    study: document.getElementById('reg-study').value,
-                    profilePic: null
-                };
-            } else {
-                if(!window.userData || window.userData.phone !== phone) {
-                    window.userData = { name: "مستخدم زائر", phone: phone, study: "عام" };
-                }
-            }
-            window.saveLocal();
-            window.renderApp();
+                window.userData = { name: document.getElementById('reg-name').value, phone: phone, study: document.getElementById('reg-study').value, profilePic: null };
+            } else { if(!window.userData || window.userData.phone !== phone) { window.userData = { name: "مستخدم زائر", phone: phone, study: "عام" }; } }
+            window.saveLocal(); window.renderApp();
         };
 
-        // --- STARTUP ---
         window.onload = () => {
             window.loadLocal();
             setTimeout(() => {
                 const loader = document.getElementById('loading-screen');
                 loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.classList.add('hidden');
-                    if(window.userData) window.renderApp(); 
-                    else document.getElementById('auth-screen').classList.remove('hidden');
-                }, 700);
+                setTimeout(() => { loader.classList.add('hidden'); if(window.userData) window.renderApp(); else document.getElementById('auth-screen').classList.remove('hidden'); }, 700);
             }, 1000);
         };
     </script>
